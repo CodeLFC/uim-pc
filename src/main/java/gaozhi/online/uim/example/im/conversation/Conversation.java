@@ -9,6 +9,7 @@ import java.net.SocketAddress;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 /**
  * @author LiFucheng
@@ -17,6 +18,7 @@ import java.util.function.Consumer;
  * @date 2022/3/22 15:21
  */
 public class Conversation implements IMMsgService.IMMsgConsumer {
+    private Logger logger = Logger.getGlobal();
     private final long selfId;
     private final long friendId;
     private final IMMsgService imMsgService;
@@ -28,6 +30,7 @@ public class Conversation implements IMMsgService.IMMsgConsumer {
         this.selfId = selfId;
         this.friendId = friendId;
         this.imMsgService = imMsgService;
+        logger.info("构造会话："+selfId+":"+friendId);
     }
 
     public long getFriendId() {
@@ -48,9 +51,10 @@ public class Conversation implements IMMsgService.IMMsgConsumer {
 
     @Override
     public void accept(IMMsg msg) {
+        IMMessage message = IMMessage.Codec.decode(msg);
+        addMessage(message);
+        logger.info("收到消息："+message);
         for (IMMessageConsumer consumer : consumers) {
-            IMMessage message = IMMessage.Codec.decode(msg);
-            addMessage(message);
             consumer.accept(message);
         }
     }

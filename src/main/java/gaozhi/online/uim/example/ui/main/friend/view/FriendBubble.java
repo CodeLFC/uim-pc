@@ -85,13 +85,14 @@ public class FriendBubble extends UPanel implements Consumer<UserInfo> {
         List<IMMessage> history = conversation.getHistoryMessage();
         if (!history.isEmpty()) {
             IMMessage message = history.get(history.size() - 1);
+
             IMMessage.DataCoder<?> dataCoder = IMMessage.Codec.getDataCoder(message.getMsgType());
             if (dataCoder == null) {
                 throw new NullPointerException("IMMessage.DataCoder<?> dataCoder == null");
             }
+            //System.out.println("刷新-未读信息:"+conversation.getUnReadMessageCount());
             label_remark.setText(dataCoder.parse2Tip(message.getData()));
             label_unread.setText("" + conversation.getUnReadMessageCount());
-            System.out.println("刷新-未读信息:"+conversation.getUnReadMessageCount());
         }
         userPoolService.getUserInfo(friendId, false, this);
     }
@@ -101,6 +102,6 @@ public class FriendBubble extends UPanel implements Consumer<UserInfo> {
         head.setImageUrl(userInfo.getHeadUrl(), defaultHead, 50, false);
         label_name.setText(userInfo.getNick());
         label_remark.setText(userInfo.getRemark());
-        System.out.println("刷新-用户信息:"+conversation.getUnReadMessageCount());
+        //System.out.println("刷新-用户信息:"+conversation.getUnReadMessageCount());
     }
 }

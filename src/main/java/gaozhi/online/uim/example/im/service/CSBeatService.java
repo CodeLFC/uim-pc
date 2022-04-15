@@ -46,7 +46,7 @@ public class CSBeatService implements UService, UBTPSocket.UMsgConsumer, Runnabl
         for (Consumer<UClient> beatResponseListener : beatResponseListenerList) {
             beatResponseListener.accept(temp);
         }
-        getLogger().info("服务器发送的心跳回执（客户端的公网信息）：" + temp);
+       // getLogger().info("服务器发送的心跳回执（客户端的公网信息）：" + temp);
 
     }
 
