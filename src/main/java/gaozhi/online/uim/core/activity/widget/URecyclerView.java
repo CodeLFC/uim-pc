@@ -1,13 +1,13 @@
 package gaozhi.online.uim.core.activity.widget;
 
-import gaozhi.online.uim.core.activity.Context;
 import gaozhi.online.uim.core.activity.widget.ui.UScrollBarUI;
+import gaozhi.online.uim.core.asynchronization.TaskExecutor;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Timer;
 import java.util.function.BiConsumer;
 
 /**
@@ -17,26 +17,32 @@ import java.util.function.BiConsumer;
  * @date 2022/3/16 15:26
  */
 
-public class URecyclerView<T> extends JPanel implements MouseWheelListener {
+public class URecyclerView<T> extends UPanel implements MouseWheelListener {
     private Component header;
     private Component bottom;
 
     private final JList<T> centerList;
+    private final JScrollPane centerPanelScroll;
     private final JScrollBar centerScrollBarV;
     private int isNeedBottom;
-    private int lastX;
-    private int lastY;
+    //定时刷新界面
+    private Timer timer;
+    private final TaskExecutor taskExecutor;
+
     public URecyclerView() {
+        taskExecutor = new TaskExecutor();
         setLayout(new BorderLayout());
-
         centerList = new JList<>();
+        centerList.setOpaque(false);
 
-        JScrollPane centerPanelScroll = new JScrollPane(centerList);
+        centerPanelScroll = new JScrollPane(centerList);
         centerPanelScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         centerPanelScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         centerPanelScroll.getHorizontalScrollBar().setUI(new UScrollBarUI());
         centerPanelScroll.getVerticalScrollBar().setUI(new UScrollBarUI());
-        centerPanelScroll.setBorder(null);
+        centerPanelScroll.setBorder(new EmptyBorder(0,0,0,0));
+        centerPanelScroll.setOpaque(false);
+        centerPanelScroll.getViewport().setOpaque(false);
         centerScrollBarV = centerPanelScroll.getVerticalScrollBar();
         add(centerPanelScroll);
         centerList.addMouseWheelListener(this);
@@ -63,7 +69,8 @@ public class URecyclerView<T> extends JPanel implements MouseWheelListener {
             @Override
             public void mouseClicked(MouseEvent e) {
                 super.mouseClicked(e);
-                if(centerList.getSelectedValue()!=null) {
+                Rectangle cellBounds = centerList.getCellBounds(centerList.getSelectedIndex(), centerList.getSelectedIndex());
+                if (cellBounds.contains(e.getPoint())) {
                     itemClickedListener.accept(centerList.getSelectedIndex(), centerList.getSelectedValue());
                 }
             }
@@ -115,5 +122,16 @@ public class URecyclerView<T> extends JPanel implements MouseWheelListener {
         if (e.getWheelRotation() < 0) {
             centerScrollBarV.setValue(centerScrollBarV.getValue() - size);
         }
+    }
+
+    public void stopRefresh() {
+        if (timer != null) {
+            timer.cancel();
+        }
+    }
+
+    public void refresh(long period) {
+        stopRefresh();
+        timer = taskExecutor.executeTimerTask(() -> taskExecutor.executeInUIThread(centerPanelScroll::updateUI), period);
     }
 }

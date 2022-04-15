@@ -1,6 +1,7 @@
 package gaozhi.online.uim.example;
 
 import gaozhi.online.uim.core.Application;
+import gaozhi.online.uim.core.activity.Intent;
 import gaozhi.online.uim.core.resource.Resources;
 import gaozhi.online.uim.example.im.conversation.IMMessage;
 import gaozhi.online.uim.example.im.conversation.message.IMTextDataCoder;
@@ -50,10 +51,8 @@ public class UIMApplication extends Application {
     public static void main(String[] args) throws IOException {
         try {
             UIMApplication application = new UIMApplication(new Resources("config.application"));
-
             application.startService();
-
-            application.configSkin(new OfficeBlack2007Skin());
+            application.configSkin(new BusinessBlueSteelSkin());
             application.startActivity(LoginActivity.class);
         } catch (Exception e) {
             FileUtil.write("exception.txt", e.getMessage(), true);

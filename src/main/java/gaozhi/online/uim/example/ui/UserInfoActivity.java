@@ -85,9 +85,10 @@ public class UserInfoActivity extends Activity implements ApiRequest.ResultHandl
     private UpdateUserInfoService updateUserInfoService;
     private GetFriendService getFriendService;
     private AddAttentionService addAttentionService;
+    private Friend friend;
 
-    public UserInfoActivity(Context context, Intent intent, String title) {
-        super(context, intent, title);
+    public UserInfoActivity(Context context, Intent intent, String title, long id) {
+        super(context, intent, title, id);
     }
 
     @Override
@@ -197,6 +198,7 @@ public class UserInfoActivity extends Activity implements ApiRequest.ResultHandl
         if (userInfo.getId() != token.getUserid()) {
             btn_update.setEnabled(false);
             setTitle(getContext().getString("friend"));
+            getFriendService.request(token, token.getUserid(), userInfo.getId());
         } else {
             btn_chat.setEnabled(false);
             setTitle(getContext().getString("self"));
@@ -225,7 +227,12 @@ public class UserInfoActivity extends Activity implements ApiRequest.ResultHandl
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btn_chat) {
-            getFriendService.request(token, token.getUserid(), userInfo.getId());
+            if (friend != null) {
+                startChat(friend);
+            } else {
+                //关注用户
+                addAttentionService.request(token, userInfo.getId());
+            }
             return;
         }
         userInfo.setNick(text_nick.getUText());
@@ -264,17 +271,18 @@ public class UserInfoActivity extends Activity implements ApiRequest.ResultHandl
         Intent intent = new Intent();
         intent.put(INTENT_USER_INFO, userInfo);
         intent.put(INTENT_USER_TOKEN, token);
-        context.startActivity(UserInfoActivity.class, intent);
+        Activity activity = context.getActivityList().getActivity(userInfo.getId());
+        if (activity == null) {
+            context.startActivity(UserInfoActivity.class, intent, userInfo.getId());
+        } else {
+            activity.showActivity();
+        }
     }
 
     @Override
     public void start(int id) {
         if (id == updateUserInfoService.getId()) {
             btn_update.setText(getContext().getString("progressing"));
-            return;
-        }
-        if (id == getFriendService.getId()) {
-            btn_chat.setText(getContext().getString("progressing"));
         }
     }
 
@@ -287,13 +295,8 @@ public class UserInfoActivity extends Activity implements ApiRequest.ResultHandl
             return;
         }
         if (id == getFriendService.getId()) {
-            Friend friend = gson.fromJson(result.getData(), Friend.class);
-            if (friend != null) {
-                startChat(friend);
-            } else {
-                //关注用户
-                addAttentionService.request(token, userInfo.getId());
-            }
+            friend = gson.fromJson(result.getData(), Friend.class);
+            setTitle(getTitle() + "  " + friend.getRemark());
         }
         if (id == addAttentionService.getId()) {
             Friend friend = gson.fromJson(result.getData(), Friend.class);
@@ -309,7 +312,7 @@ public class UserInfoActivity extends Activity implements ApiRequest.ResultHandl
             btn_update.setText(getContext().getString("update_info"));
             return;
         }
-        if (id == getFriendService.getId() || id == addAttentionService.getId()) {
+        if (id == addAttentionService.getId()) {
             btn_chat.setText(getContext().getString("chat"));
         }
     }

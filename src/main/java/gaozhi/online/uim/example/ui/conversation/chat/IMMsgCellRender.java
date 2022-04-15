@@ -1,6 +1,7 @@
 package gaozhi.online.uim.example.ui.conversation.chat;
 
 import gaozhi.online.uim.core.activity.Context;
+import gaozhi.online.uim.core.activity.widget.UPanel;
 import gaozhi.online.uim.core.activity.widget.URecyclerCellRender;
 import gaozhi.online.uim.example.im.conversation.IMMessage;
 import gaozhi.online.uim.example.im.service.IMServiceApplication;
@@ -34,11 +35,12 @@ public class IMMsgCellRender extends URecyclerCellRender<IMMessage> {
             IMMessageViewHolder messageViewHolder = new IMMessageViewHolder(context);
             viewHolderMap.put(index, messageViewHolder);
         }
-        viewHolderMap.get(index).bindView(value);
-        return viewHolderMap.get(index);
+        IMMessageViewHolder component = viewHolderMap.get(index);
+        component.bindView(value);
+        return component;
     }
 
-    private static class IMMessageViewHolder extends JPanel {
+    private static class IMMessageViewHolder extends UPanel {
         private final IMMsgBubble msgBubble;
         //布局
         private final FlowLayout flowLayout;

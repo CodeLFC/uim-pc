@@ -35,7 +35,7 @@ public class ConversationService implements UService, IMMsgService.IMMsgConsumer
 
     @Override
     public void closeService() {
-
+          conversationMap.clear();
     }
 
     public Conversation getConversation(long friendId) {

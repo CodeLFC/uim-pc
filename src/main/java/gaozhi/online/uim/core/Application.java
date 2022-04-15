@@ -7,8 +7,6 @@ import gaozhi.online.uim.core.asynchronization.TaskExecutor;
 import org.pushingpixels.substance.api.SubstanceLookAndFeel;
 import org.pushingpixels.substance.api.SubstanceSkin;
 
-import javax.swing.*;
-
 /**
  * @author LiFucheng
  * @version 1.0
@@ -21,13 +19,13 @@ public class Application extends Context {
 
     public Application(Resources resources) {
         super(resources);
-        FontClass.loadIndyFont(FontClass.FontExample.SONG);
+        FontClass.loadIndyFont(FontClass.FontExample.SONG16);
     }
 
     public void configSkin(SubstanceSkin substanceSkin) {
 
-        JFrame.setDefaultLookAndFeelDecorated(true);
-        JDialog.setDefaultLookAndFeelDecorated(true);
+        //JFrame.setDefaultLookAndFeelDecorated(true);
+        //JDialog.setDefaultLookAndFeelDecorated(true);
         taskExecutor.executeInUIThread(() -> {
             //启动页面
             SubstanceLookAndFeel.setSkin(substanceSkin);

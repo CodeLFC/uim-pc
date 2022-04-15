@@ -10,7 +10,7 @@ package gaozhi.online.uim.core.asynchronization;
 public class Handler {
     private TaskExecutor taskExecutor = new TaskExecutor();
 
-    public void sendMessage(Message message) {
+    public synchronized void sendMessage(Message message) {
         // 模拟发送到GUI线程
         taskExecutor.executeInUIThread(() -> handleMessage(message));
     }

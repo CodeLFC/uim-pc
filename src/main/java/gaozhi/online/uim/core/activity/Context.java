@@ -73,7 +73,7 @@ public class Context {
 
     public Image getDrawable(String key) throws IOException {
         String urlKey = drawables.getDrawable(key);
-        URL url =getClass().getResource(urlKey);
+        URL url = getClass().getResource(urlKey);
         return ImageIO.read(Objects.requireNonNull(url));
     }
 
@@ -86,18 +86,26 @@ public class Context {
     }
 
     public <T extends Activity> void startActivity(Class<T> activityClass) {
-        startActivity(activityClass, null);
+        startActivity(activityClass, new Intent(), Activity.generateId());
+    }
+
+    public <T extends Activity> void startActivity(Class<T> activityClass, long id) {
+        startActivity(activityClass, new Intent(), id);
     }
 
     public <T extends Activity> void startActivity(Class<T> activityClass, Intent intent) {
-        startActivity(activityClass, intent, getString("app_name"));
+        startActivity(activityClass, intent, getString("app_name"), Activity.generateId());
     }
 
-    public <T extends Activity> void startActivity(Class<T> activityClass, Intent intent, String title) {
+    public <T extends Activity> void startActivity(Class<T> activityClass, Intent intent, long id) {
+        startActivity(activityClass, intent, getString("app_name"), id);
+    }
+
+    public <T extends Activity> void startActivity(Class<T> activityClass, Intent intent, String title, long id) {
         taskExecutor.executeInUIThread(() -> {
             try {
-                Constructor<T> constructor = activityClass.getConstructor(Context.class, Intent.class, String.class);
-                constructor.newInstance(Context.this, intent, title);
+                Constructor<T> constructor = activityClass.getConstructor(Context.class, Intent.class, String.class, long.class);
+                constructor.newInstance(Context.this, intent, title, id);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 e.printStackTrace();
             }

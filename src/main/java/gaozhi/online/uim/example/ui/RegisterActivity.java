@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import gaozhi.online.uim.core.activity.Activity;
 import gaozhi.online.uim.core.activity.Context;
 import gaozhi.online.uim.core.activity.Intent;
+import gaozhi.online.uim.core.activity.widget.UPanel;
 import gaozhi.online.uim.core.activity.widget.UTextField;
 import gaozhi.online.uim.core.activity.widget.UToast;
 import gaozhi.online.uim.core.asynchronization.TaskExecutor;
@@ -44,9 +45,8 @@ public class RegisterActivity extends Activity implements ApiRequest.ResultHandl
     private RegisterService registerService;
     private UserInfo registerUser;
 
-    public RegisterActivity(Context context, Intent intent, String title) {
-        super(context, intent, title);
-        setResizable(false);
+    public RegisterActivity(Context context, Intent intent, String title,long id) {
+        super(context, intent, title,id);
     }
 
     @Override
@@ -58,15 +58,16 @@ public class RegisterActivity extends Activity implements ApiRequest.ResultHandl
 
     @Override
     public void initUI() {
+        setResizable(false);
         setRootGridLayout(ROWS, COLS);
         setVGap(20);
         text_phone = new UTextField();
         text_phone.setHint(getContext().getString("tip_enter_phone"));
-        JPanel panelPhone = getChildPanel(4, 2);
+        UPanel panelPhone = getChildPanel(4, 2);
         panelPhone.setLayout(new BorderLayout());
         panelPhone.add(text_phone);
 
-        JPanel panelVerifyCode = getChildPanel(5, 2);
+        UPanel panelVerifyCode = getChildPanel(5, 2);
         BorderLayout panelVerifyCodeBorderLayout = new BorderLayout();
         panelVerifyCodeBorderLayout.setHgap(40);
         panelVerifyCode.setLayout(panelVerifyCodeBorderLayout);
@@ -76,13 +77,13 @@ public class RegisterActivity extends Activity implements ApiRequest.ResultHandl
         btn_send = new JButton(getContext().getString("send"));
         panelVerifyCode.add(btn_send, BorderLayout.EAST);
 
-        JPanel panelPass = getChildPanel(6, 2);
+        UPanel panelPass = getChildPanel(6, 2);
         panelPass.setLayout(new BorderLayout());
         text_new_pass = new UTextField();
         text_new_pass.setHint(getContext().getString("tip_new_pass"));
         panelPass.add(text_new_pass);
         btn_register = new JButton(getContext().getString("register"));
-        JPanel panelRegister = getChildPanel(7, 2);
+        UPanel panelRegister = getChildPanel(7, 2);
         panelRegister.setLayout(new BorderLayout());
         panelRegister.add(btn_register);
 

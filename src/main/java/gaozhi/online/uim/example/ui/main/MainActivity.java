@@ -5,24 +5,24 @@ import gaozhi.online.uim.core.activity.Activity;
 import gaozhi.online.uim.core.activity.Context;
 import gaozhi.online.uim.core.activity.Intent;
 import gaozhi.online.uim.core.activity.widget.*;
-import gaozhi.online.uim.core.asynchronization.TaskExecutor;
 import gaozhi.online.uim.core.net.Result;
 import gaozhi.online.uim.core.net.http.ApiRequest;
+import gaozhi.online.uim.core.utils.ImageUtil;
 import gaozhi.online.uim.example.entity.UserInfo;
 import gaozhi.online.uim.example.entity.dto.UserDTO;
+import gaozhi.online.uim.example.im.entity.IMMsg;
 import gaozhi.online.uim.example.im.entity.UServer;
 import gaozhi.online.uim.example.im.service.CSBeatService;
 import gaozhi.online.uim.example.im.service.IMMsgService;
 import gaozhi.online.uim.example.im.service.IMServiceApplication;
 import gaozhi.online.uim.example.im.service.UserPoolService;
 import gaozhi.online.uim.example.service.im.GetIMServerService;
-import gaozhi.online.uim.example.service.user.GetUserInfoService;
+import gaozhi.online.uim.example.ui.LoginActivity;
 import gaozhi.online.uim.example.ui.UserInfoActivity;
 import gaozhi.online.uim.example.ui.main.card.AttentionCard;
 import gaozhi.online.uim.core.activity.widget.BaseCard;
 import gaozhi.online.uim.example.ui.main.card.FanCard;
 import gaozhi.online.uim.example.utils.DateTimeUtil;
-import gaozhi.online.uim.example.utils.ImageUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -44,20 +44,24 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
     private static final String INTENT_USER = "intent_user";
     //ui
     //top
-    private JPanel top;
+    private UPanel top;
     //private JLabel label_signature;
     private UTextField text_search_content;
     private UNavigationBar uNavigationBar;
     //center
-    private JPanel center;
+    private UPanel center;
     private CardLayout centerLayout;
     private BaseCard<UserDTO>[] centerCards;
 
     //bottom
-    private JPanel bottom;
-    private UImageView label_info_image;
-    private UImageView label_server_image;
+    private UPanel bottom;
+
+    private UImageView image_info;
+    private UImageView image_exit_account;
+    private UImageView image_server;
     private JLabel label_server;
+    private JLabel label_beat;
+
     //param
     private UserDTO userDTO;
 
@@ -66,10 +70,9 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
     // service--------------
     private final Gson gson = new Gson();
     private GetIMServerService getIMServerService;
-    private GetUserInfoService getUserInfoService;
 
-    public MainActivity(Context context, Intent intent, String title) {
-        super(context, intent, title);
+    public MainActivity(Context context, Intent intent, String title, long id) {
+        super(context, intent, title, id);
     }
 
     @Override
@@ -80,7 +83,7 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
         bottom_height = getContext().getDimen("main_bottom_height", 50);
 
         getIMServerService = new GetIMServerService(this);
-        getUserInfoService = new GetUserInfoService(this);
+
     }
 
     @Override
@@ -90,20 +93,20 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
         setSize(getHeight(), getWidth());
         setLocation(getX() + getWidth() / 2, getY() - getHeight() / 5);
         setRootGridLayout(1, 1);
-        JPanel panel = getChildPanel(1, 1);
+        UPanel panel = getChildPanel(1, 1);
         panel.setLayout(new BorderLayout());
 
         //二级子布局
         // ----top
-        top = new JPanel();
+        top = new UPanel();
         top.setLayout(new BorderLayout());
         top.setPreferredSize(new Dimension(getWidth(), top_height));
         //-========center
-        center = new JPanel();
+        center = new UPanel();
         centerLayout = new CardLayout();
         center.setLayout(centerLayout);
         //====================bottom
-        bottom = new JPanel();
+        bottom = new UPanel();
         FlowLayout flowLayout_bottom = new FlowLayout();
         flowLayout_bottom.setAlignment(FlowLayout.LEFT);
         flowLayout_bottom.setVgap(10);
@@ -139,24 +142,24 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
         }
         //---------bottom
         try {
-            label_info_image = new UImageView(ImageUtil.getScaleImage(getContext().getDrawable("bottom_info"), bottom_height / 2));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            label_server_image = new UImageView(ImageUtil.getScaleImage(getContext().getDrawable("bottom_server"), bottom_height / 2));
+            image_info = new UImageView(ImageUtil.getScaleImage(getContext().getDrawable("bottom_info"), bottom_height / 2));
+            image_server = new UImageView(ImageUtil.getScaleImage(getContext().getDrawable("bottom_server"), bottom_height / 2));
+            image_exit_account = new UImageView(ImageUtil.getScaleImage(getContext().getDrawable("bottom_exit_account"), bottom_height / 2));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
         label_server = new JLabel(getContext().getString("tip_server"));
-        bottom.add(label_info_image);
-        bottom.add(label_server_image);
+        label_beat = new JLabel();
+        bottom.add(image_info);
+        bottom.add(image_exit_account);
+        bottom.add(image_server);
         bottom.add(label_server);
+        bottom.add(label_beat);
         //---------listener
-        label_info_image.setActionListener(this);
+        image_info.setActionListener(this);
         text_search_content.addKeyListener(this);
-        addKeyListener(this);
+        image_exit_account.setActionListener(this);
     }
 
     @Override
@@ -167,21 +170,57 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
         setTitle(userDTO.getUserInfo().getNick() + "[" + userDTO.getUserInfo().getId() + "] " + remark);
         setIcon(userDTO.getUserInfo().getHeadUrl());
         getIMServerService.request(userDTO.getToken());
-        new TaskExecutor().executeDelayTask(() -> {
-            logger.info("刷新");
-            for (BaseCard<UserDTO> baseCard : centerCards) {
-                baseCard.doBusiness();
+
+        CSBeatService beatService = IMServiceApplication.getInstance().getServiceInstance(CSBeatService.class);
+        beatService.addBeatResponseListener(uClient ->{
+         label_beat.setText("beat:" + uClient.getIp() + ":" + uClient.getPort() + " " + DateTimeUtil.getHMSTime(uClient.getUpdateTime()));
+         if(!isIconified()){
+             stopTwinkle();
+         }
+        });
+
+        IMMsgService imMsgService = IMServiceApplication.getInstance().getServiceInstance(IMMsgService.class);
+        imMsgService.addIMMsgConsumer(msg -> {
+            logger.info("收到UMsg:"+msg.toString());
+            if(isIconified()&&!isTwinkle()){
+                startTwinkle(1000);
             }
-        },1000);
+        });
+    }
+
+    @Override
+    public void dispose() {
+        //关闭服务
+        IMServiceApplication.getInstance().getServiceInstance(IMMsgService.class).closeService();
+        IMServiceApplication.getInstance().getServiceInstance(CSBeatService.class).closeService();
+        //主页关闭后直接退出程序
+        for (Activity activity : getContext().getActivityList().getActivityList()) {
+            if (activity != this) {
+                activity.dispose();
+            }
+        }
+        super.dispose();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == label_info_image) {
+        if (e.getSource() == image_info) {
             if (getContext().getActivityList().getActivityList(UserInfoActivity.class).size() > 0) {
                 return;
             }
             UserInfoActivity.startActivity(getContext(), userDTO.getToken(), userDTO.getUserInfo());
+        }
+        if (e.getSource() == image_exit_account) {
+            LoginActivity.startActivity(getContext(), false);
+            dispose();
+        }
+    }
+
+    @Override
+    public void releaseResource() {
+        super.releaseResource();
+        for (BaseCard<UserDTO> baseCard : centerCards) {
+            baseCard.releaseResource();
         }
     }
 
@@ -196,7 +235,7 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
     public void start(int id) {
         if (id == getIMServerService.getId()) {
             label_server.setText(getContext().getString("tip_pull_im_server_info"));
-            label_server_image.setActionListener(null);
+            image_server.setActionListener(null);
         }
     }
 
@@ -208,10 +247,11 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
             logger.info(imServer.toString());
             //启动im
             IMServiceApplication.getInstance().setImServer(imServer);
+
             IMServiceApplication.getInstance().getServiceInstance(IMMsgService.class).startService();
             IMServiceApplication.getInstance().getServiceInstance(CSBeatService.class).startService();
-            label_server.setText(imServer.getRemark() + "  time at:" + DateTimeUtil.getChatTime(imServer.getUpdateTime()));
-            label_server_image.setActionListener(this);
+            label_server.setText(imServer.getRemark());
+            image_server.setActionListener(this);
         }
     }
 
@@ -228,6 +268,7 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
 
     @Override
     public void keyTyped(KeyEvent e) {
+
     }
 
     @Override
@@ -236,7 +277,7 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
 
     @Override
     public void keyReleased(KeyEvent e) {
-        if(e.getKeyChar() == KeyEvent.VK_SPACE){
+        if (e.getKeyChar() == KeyEvent.VK_SPACE) {
             logger.info("刷新信息");
             for (BaseCard<UserDTO> baseCard : centerCards) {
                 baseCard.doBusiness();
@@ -258,7 +299,6 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
             UToast.show(this, e.getMessage());
             return;
         }
-
         IMServiceApplication.getInstance().getServiceInstance(UserPoolService.class).getUserInfo(id, false, this, this);
     }
 

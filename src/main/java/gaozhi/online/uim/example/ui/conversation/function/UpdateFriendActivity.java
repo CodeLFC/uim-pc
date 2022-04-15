@@ -19,7 +19,7 @@ import java.awt.event.ActionEvent;
 /**
  * @author LiFucheng
  * @version 1.0
- * @description: TODO
+ * @description: TODO 修改朋友关系
  * @date 2022/4/13 17:03
  */
 public class UpdateFriendActivity extends Activity implements ApiRequest.ResultHandler {
@@ -39,8 +39,8 @@ public class UpdateFriendActivity extends Activity implements ApiRequest.ResultH
     private UpdateFriendService updateFriendService;
     private DeleteFriendService deleteFriendService;
 
-    public UpdateFriendActivity(Context context, Intent intent, String title) {
-        super(context, intent, title);
+    public UpdateFriendActivity(Context context, Intent intent, String title,long id) {
+        super(context, intent, title,id);
     }
 
     @Override
@@ -75,6 +75,7 @@ public class UpdateFriendActivity extends Activity implements ApiRequest.ResultH
     @Override
     public void doBusiness() {
         setTitle(getContext().getString("update_attention"));
+        text_remark.setText(friend.getRemark());
     }
 
     @Override
@@ -103,6 +104,9 @@ public class UpdateFriendActivity extends Activity implements ApiRequest.ResultH
     @Override
     public void handle(int id, Result result) {
         UToast.show(this, getContext().getString("success"));
+        if(id == deleteFriendService.getId()){
+            dispose();
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package gaozhi.online.uim.core.activity.widget;
 
+import com.github.pagehelper.util.StringUtil;
 import gaozhi.online.uim.core.asynchronization.TaskExecutor;
 import gaozhi.online.uim.core.utils.ImageUtil;
 
@@ -15,6 +16,7 @@ import java.io.IOException;
  */
 public class UImageView extends ULabel {
     private Image image;
+    private String url;
 
     public UImageView() {
         this(null);
@@ -37,25 +39,33 @@ public class UImageView extends ULabel {
     }
 
     public void setImageUrl(String url, int size, boolean circle) {
-        setImageUrl(url, null, size, circle);
+        setImageUrl(url, null, size, circle, false);
     }
 
     public void setImageUrl(String url, Image defaultImage, int size, boolean circle) {
+        setImageUrl(url, defaultImage, size, circle, false);
+    }
+
+    public void setImageUrl(String url, Image defaultImage, int size, boolean circle, boolean reload) {
         if (url == null || url.isBlank()) {
+            return;
+        }
+        if (!reload && url.equals(this.url)) {
             return;
         }
         new TaskExecutor().executeInBackThread(() -> {
             try {
                 Image image = ImageUtil.readURL(url);
+                Image scaleImage = ImageUtil.getScaleImage(image, size);
+                if (circle) {
+                    scaleImage = ImageUtil.convertCircular(image, size);
+                }
+                setImage(scaleImage);
                 new TaskExecutor().executeInUIThread(() -> {
-                    Image scaleImage = gaozhi.online.uim.example.utils.ImageUtil.getScaleImage(image, size);
-                    if (circle) {
-                        scaleImage = gaozhi.online.uim.example.utils.ImageUtil.convertCircular(image, size);
-                    }
-                    setImage(scaleImage);
+
                 });
             } catch (IOException e) {
-                setImage(gaozhi.online.uim.example.utils.ImageUtil.getScaleImage(defaultImage, size));
+                setImage(ImageUtil.getScaleImage(defaultImage, size));
                 e.printStackTrace();
             }
         });

@@ -12,6 +12,7 @@ public enum IMMsgType {
     REAL_VIDEO(1002),
     FILE(1003);
     private final int type;
+
     IMMsgType(int type) {
         this.type = type;
     }

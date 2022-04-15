@@ -55,16 +55,22 @@ public class FanCard extends BaseCard<UserDTO> implements ApiRequest.ResultHandl
         setLayout(new BorderLayout());
         fanURecyclerView = new URecyclerView<>();
         fanURecyclerView.setCellRender(new FriendCellRender(getContext()));
-        fanListModel = new FriendListModel(fanURecyclerView);
+        fanListModel = new FriendListModel(fanURecyclerView,userDTO.getToken().getUserid());
         fanURecyclerView.setListModel(fanListModel);
         add(fanURecyclerView);
         fanURecyclerView.addItemClickedListener(this);
+        fanURecyclerView.refresh(1000);
     }
 
     @Override
     public void doBusiness() {
         fanListModel.removeAllElements();
         getFanService.request(userDTO.getToken(), fanPageInfo.getNextPage());
+    }
+
+    @Override
+    public void releaseResource() {
+        fanURecyclerView.stopRefresh();
     }
 
     @Override

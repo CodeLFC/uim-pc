@@ -1,6 +1,7 @@
 package gaozhi.online.uim.example.ui.main.friend;
 
 import gaozhi.online.uim.core.activity.Context;
+import gaozhi.online.uim.core.activity.widget.UPanel;
 import gaozhi.online.uim.core.activity.widget.URecyclerCellRender;
 import gaozhi.online.uim.example.entity.Friend;
 import gaozhi.online.uim.example.ui.main.friend.view.FriendBubble;
@@ -27,15 +28,27 @@ public class FriendCellRender extends URecyclerCellRender<Friend> {
 
     @Override
     public Component getListCellRendererComponent(JList<? extends Friend> list, Friend value, int index, boolean isSelected, boolean cellHasFocus) {
+        FriendViewHolder friendViewHolder;
         if (!viewHolderMap.containsKey(index)) {
-            FriendViewHolder friendViewHolder = new FriendViewHolder(context);
+            friendViewHolder = new FriendViewHolder(context);
             viewHolderMap.put(index, friendViewHolder);
         }
-        viewHolderMap.get(index).bindView(value);
+        friendViewHolder = viewHolderMap.get(index);
+        friendViewHolder.bindView(value);
+        return friendViewHolder;
+    }
+
+    /**
+     * @description: TODO 获取view holder
+     * @author LiFucheng
+     * @date 2022/4/15 9:11
+     * @version 1.0
+     */
+    public FriendViewHolder getFriendViewHolder(int index) {
         return viewHolderMap.get(index);
     }
 
-    private static class FriendViewHolder extends JPanel {
+    public static class FriendViewHolder extends UPanel {
         private final FriendBubble friendBubble;
 
         public FriendViewHolder(Context context) {

@@ -11,7 +11,7 @@ import java.awt.*;
  * @description: TODO  卡片
  * @date 2022/4/13 9:38
  */
-public abstract class BaseCard<T> extends JPanel {
+public abstract class BaseCard<T> extends UPanel {
     private final String key;
     private final Context context;
     public BaseCard(String key, Context context, T data) {
@@ -35,4 +35,6 @@ public abstract class BaseCard<T> extends JPanel {
     public Context getContext() {
         return context;
     }
+
+    public abstract void releaseResource();
 }

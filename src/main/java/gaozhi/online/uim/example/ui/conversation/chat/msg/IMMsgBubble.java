@@ -2,13 +2,15 @@ package gaozhi.online.uim.example.ui.conversation.chat.msg;
 
 import gaozhi.online.uim.core.activity.Context;
 import gaozhi.online.uim.core.activity.widget.UImageView;
+import gaozhi.online.uim.core.activity.widget.UPanel;
+import gaozhi.online.uim.core.asynchronization.TaskExecutor;
+import gaozhi.online.uim.core.utils.ImageUtil;
 import gaozhi.online.uim.example.entity.UserInfo;
 import gaozhi.online.uim.example.im.conversation.IMMessage;
 import gaozhi.online.uim.example.im.service.IMServiceApplication;
 import gaozhi.online.uim.example.im.conversation.message.IMMsgType;
 import gaozhi.online.uim.example.im.service.UserPoolService;
 import gaozhi.online.uim.example.utils.DateTimeUtil;
-import gaozhi.online.uim.example.utils.ImageUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,12 +25,10 @@ import java.util.function.Consumer;
  * @description: TODO  显示消息的bubble
  * @date 2022/3/17 10:48
  */
-public class IMMsgBubble extends JPanel implements Consumer<UserInfo> {
+public class IMMsgBubble extends UPanel implements Consumer<UserInfo> {
     private final Context context;
     //布局
     private FlowLayout flowLayout;
-    private boolean isSelf;
-    private IMMessage msg;
     //头像内容
     private Image defaultHead;
     private UImageView image_head;
@@ -38,13 +38,15 @@ public class IMMsgBubble extends JPanel implements Consumer<UserInfo> {
 //    private FlowLayout flowLayout_name;
     //时间
     private JLabel label_time;
-    private JPanel panel_time;
+    private UPanel panel_time;
     private FlowLayout flowLayout_time;
     //显示内容
-    private JPanel panelMsg;
+    private UPanel panelMsg;
     //消息内容显示区域
     private Map<IMMsgType, IMMsgView> imMsgViewMap;
-
+    //是否已经设置了布局
+    private boolean isBindView = false;
+    private final TaskExecutor taskExecutor = new TaskExecutor();
     public IMMsgBubble(Context context) {
         this.context = context;
         imMsgViewMap = new HashMap<>();
@@ -53,7 +55,7 @@ public class IMMsgBubble extends JPanel implements Consumer<UserInfo> {
 
         image_head = new UImageView();
 
-        panelMsg = new JPanel();
+        panelMsg = new UPanel();
 
         panelMsg.setLayout(new BorderLayout());
         //label_name = new JLabel();
@@ -61,7 +63,7 @@ public class IMMsgBubble extends JPanel implements Consumer<UserInfo> {
         //flowLayout_name = new FlowLayout();
         flowLayout_time = new FlowLayout();
         //panel_name = new JPanel();
-        panel_time = new JPanel();
+        panel_time = new UPanel();
         //panel_name.setLayout(flowLayout_name);
         panel_time.setLayout(flowLayout_time);
         //panel_name.add(label_name);
@@ -82,40 +84,34 @@ public class IMMsgBubble extends JPanel implements Consumer<UserInfo> {
 
 
     public void bindView(IMMessage msg) {
-        this.msg = msg;
-        UserPoolService userPoolService = IMServiceApplication.getInstance().getServiceInstance(UserPoolService.class);
-        isSelf = msg.getFromId() == userPoolService.getSelfId();
-        userPoolService.getUserInfo(msg.getFromId(), false, this);
-    }
-
-    @Override
-    public void accept(UserInfo showUser) {
         label_time.setText(DateTimeUtil.getChatTime(msg.getTime()));
-        image_head.setImageUrl(showUser.getHeadUrl(), defaultHead, 50,false);
-        if (isSelf) {
-            add(panelMsg);
-            add(image_head);
-            //flowLayout_name.setAlignment(FlowLayout.RIGHT);
-            flowLayout_time.setAlignment(FlowLayout.RIGHT);
-            //label_name.setText(showUser.getNick() + "[" + showUser.getId() + "]");
-        } else {
-            add(image_head);
-            add(panelMsg);
-            //flowLayout_name.setAlignment(FlowLayout.LEFT);
-            flowLayout_time.setAlignment(FlowLayout.LEFT);
-            //label_name.setText(showUser.getNick());
-        }
-
-        //panelMsg.add(panel_name, BorderLayout.NORTH);
-
         //----------------动态加载显示内容
         IMMsgView view = imMsgViewMap.get(msg.getMsgType());
         if (view == null) {
             throw new NullPointerException("没有注册此消息类型所对应的视图");
         }
+        UserPoolService userPoolService = IMServiceApplication.getInstance().getServiceInstance(UserPoolService.class);
+        boolean isSelf = msg.getFromId() == userPoolService.getSelfId();
+        userPoolService.getUserInfo(msg.getFromId(), false, this);
         view.bindView(msg, isSelf);
-        panelMsg.add(view, BorderLayout.CENTER);
-        //
-        panelMsg.add(panel_time, BorderLayout.SOUTH);
+        if (!isBindView) {
+            if (isSelf) {
+                add(panelMsg);
+                add(image_head);
+                flowLayout_time.setAlignment(FlowLayout.RIGHT);
+            } else {
+                add(image_head);
+                add(panelMsg);
+                flowLayout_time.setAlignment(FlowLayout.LEFT);
+            }
+            panelMsg.add(panel_time, BorderLayout.SOUTH);
+            panelMsg.add(view, BorderLayout.CENTER);
+            isBindView = true;
+        }
+    }
+
+    @Override
+    public void accept(UserInfo showUser) {
+        image_head.setImageUrl(showUser.getHeadUrl(), defaultHead, 50, false);
     }
 }

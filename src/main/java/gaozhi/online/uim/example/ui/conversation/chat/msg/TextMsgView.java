@@ -25,7 +25,6 @@ public class TextMsgView extends IMMsgView {
     private boolean isSelf;
 
     public TextMsgView() {
-        setOpaque(false);
         textArea = new JTextArea();
         textArea.setBorder(new EmptyBorder(6, 6, 6, 6));
         add(textArea);
@@ -72,7 +71,7 @@ public class TextMsgView extends IMMsgView {
     }
 
     private void paintRight(final Graphics2D g2d) {
-        g2d.setColor(new Color(0.9f, 0.9f, 0.8f));
+        g2d.setColor(new Color(149, 193, 239));
         int bottomLineY = getHeight() - strokeThickness;
         int width = getWidth() - arrowSize - (strokeThickness * 2);
         g2d.fillRect(padding, padding, width, bottomLineY);

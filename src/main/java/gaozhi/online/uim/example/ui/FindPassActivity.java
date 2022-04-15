@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import gaozhi.online.uim.core.activity.Activity;
 import gaozhi.online.uim.core.activity.Context;
 import gaozhi.online.uim.core.activity.Intent;
+import gaozhi.online.uim.core.activity.widget.UPanel;
 import gaozhi.online.uim.core.activity.widget.UTextField;
 import gaozhi.online.uim.core.activity.widget.UToast;
 import gaozhi.online.uim.core.asynchronization.TaskExecutor;
@@ -39,9 +40,8 @@ public class FindPassActivity extends Activity implements Runnable, ApiRequest.R
     private SendVerifyCodeService sendVerifyCodeService;
     private ResetPassService resetPassService;
     private String phone;
-    public FindPassActivity(Context context, Intent intent, String title) {
-        super(context, intent, title);
-        setResizable(false);
+    public FindPassActivity(Context context, Intent intent, String title,long id) {
+        super(context, intent, title,id);
     }
 
     @Override
@@ -53,15 +53,16 @@ public class FindPassActivity extends Activity implements Runnable, ApiRequest.R
 
     @Override
     public void initUI() {
+        setResizable(false);
         setRootGridLayout(ROWS, COLS);
         setVGap(20);
         text_phone = new UTextField();
         text_phone.setHint(getContext().getString("tip_enter_phone"));
-        JPanel panelPhone = getChildPanel(3, 2);
+        UPanel panelPhone = getChildPanel(3, 2);
         panelPhone.setLayout(new BorderLayout());
         panelPhone.add(text_phone);
 
-        JPanel panelVerifyCode = getChildPanel(4, 2);
+        UPanel panelVerifyCode = getChildPanel(4, 2);
         BorderLayout panelVerifyCodeBorderLayout = new BorderLayout();
         panelVerifyCodeBorderLayout.setHgap(40);
         panelVerifyCode.setLayout(panelVerifyCodeBorderLayout);
@@ -70,7 +71,7 @@ public class FindPassActivity extends Activity implements Runnable, ApiRequest.R
         panelVerifyCode.add(text_verify_code);
 
 
-        JPanel panelPass = getChildPanel(5, 2);
+        UPanel panelPass = getChildPanel(5, 2);
         panelPass.setLayout(new BorderLayout());
         text_new_pass = new UTextField();
         text_new_pass.setHint(getContext().getString("tip_new_pass"));
@@ -81,7 +82,7 @@ public class FindPassActivity extends Activity implements Runnable, ApiRequest.R
         panelVerifyCode.add(btn_send, BorderLayout.EAST);
 
         btn_reset_pass = new JButton(getContext().getString("update_pass"));
-        JPanel panelRegister = getChildPanel(6, 2);
+        UPanel panelRegister = getChildPanel(6, 2);
         panelRegister.setLayout(new BorderLayout());
         panelRegister.add(btn_reset_pass);
 

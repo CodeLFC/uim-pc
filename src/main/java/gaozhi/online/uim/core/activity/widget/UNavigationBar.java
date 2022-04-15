@@ -11,7 +11,7 @@ import java.awt.event.ActionListener;
  * @description: TODO 导航栏
  * @date 2022/4/12 20:45
  */
-public class UNavigationBar extends JPanel implements ActionListener {
+public class UNavigationBar extends UPanel implements ActionListener {
     private final GridLayout navigationPanelGridLayout = new GridLayout();
     private Color selectedColor = Color.RED;
     private Color unSelectedColor = Color.BLACK;

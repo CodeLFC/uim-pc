@@ -8,9 +8,13 @@ import gaozhi.online.ubtb.core.net.UMsgType;
 import gaozhi.online.ubtb.core.util.ByteUtil;
 import gaozhi.online.uim.core.asynchronization.TaskExecutor;
 import gaozhi.online.uim.example.im.entity.UClient;
+
 import java.io.IOException;
 import java.net.SocketAddress;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Timer;
+import java.util.function.Consumer;
 
 /**
  * @author LiFucheng
@@ -24,10 +28,13 @@ public class CSBeatService implements UService, UBTPSocket.UMsgConsumer, Runnabl
     private IMServiceApplication imServiceApplication;
     private IMMsgService imMsgService;
     private UserPoolService userPoolService;
-
+    private List<Consumer<UClient>> beatResponseListenerList;
     //client & self
     private final Gson gson = new Gson();
-    private final UClient self = new UClient();
+
+    public CSBeatService() {
+        beatResponseListenerList = new LinkedList<>();
+    }
 
     @Override
     public void accept(UMsg uMsg, SocketAddress socketAddress) {
@@ -36,12 +43,11 @@ public class CSBeatService implements UService, UBTPSocket.UMsgConsumer, Runnabl
         }
         //s2c 心跳回执
         UClient temp = gson.fromJson(ByteUtil.bytesToString(uMsg.getData()), UClient.class);
-        self.setId(temp.getId());
-        self.setIp(temp.getIp());
-        self.setPort(temp.getPort());
-        self.setUpdateTime(temp.getUpdateTime());
+        for (Consumer<UClient> beatResponseListener : beatResponseListenerList) {
+            beatResponseListener.accept(temp);
+        }
+        getLogger().info("服务器发送的心跳回执（客户端的公网信息）：" + temp);
 
-        getLogger().info("服务器发送的心跳回执（客户端的公网信息）：" + self);
     }
 
     @Override
@@ -79,13 +85,11 @@ public class CSBeatService implements UService, UBTPSocket.UMsgConsumer, Runnabl
         timer.cancel();
     }
 
-    /**
-     * @description: TODO 获取客户端的公网ip信息
-     * @author LiFucheng
-     * @date 2022/3/23 9:54
-     * @version 1.0
-     */
-    public UClient getSelfInfo() {
-        return self;
+    public void removeBeatResponseListener(Consumer<UClient> beatResponseListener) {
+        beatResponseListenerList.remove(beatResponseListener);
+    }
+
+    public void addBeatResponseListener(Consumer<UClient> beatResponseListener) {
+        beatResponseListenerList.add(beatResponseListener);
     }
 }

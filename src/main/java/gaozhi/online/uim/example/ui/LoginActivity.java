@@ -5,6 +5,7 @@ import gaozhi.online.uim.core.activity.Activity;
 import gaozhi.online.uim.core.activity.Context;
 import gaozhi.online.uim.core.activity.Intent;
 import gaozhi.online.uim.core.activity.widget.ULabel;
+import gaozhi.online.uim.core.activity.widget.UPanel;
 import gaozhi.online.uim.core.activity.widget.UTextField;
 import gaozhi.online.uim.core.activity.widget.UToast;
 import gaozhi.online.uim.core.net.Result;
@@ -32,7 +33,7 @@ import java.io.IOException;
  * @date 2022/1/25 23:45
  */
 public class LoginActivity extends Activity implements ApiRequest.ResultHandler {
-    private static final String LOGIN_FILE = "login_user.data";
+    public static final String LOGIN_FILE = "login_user.data";
     private static final int COLS = 3;
     private static final int ROWS = 8;
     private UTextField text_id;
@@ -44,15 +45,19 @@ public class LoginActivity extends Activity implements ApiRequest.ResultHandler 
     private Gson gson;
     private String account;
     private String pass;
+    // intent
+    private static final String INTENT_AUTO_LOGIN = "auto_login";
+    private boolean autoLogin;
 
-    public LoginActivity(Context context, Intent intent, String title) {
-        super(context, intent, title);
+    public LoginActivity(Context context, Intent intent, String title, long id) {
+        super(context, intent, title, id);
     }
 
     @Override
     public void initParam(Intent intent) {
         loginService = new LoginService(this);
         gson = new Gson();
+        autoLogin = intent.getBoolean(INTENT_AUTO_LOGIN, true);
     }
 
     @Override
@@ -61,25 +66,25 @@ public class LoginActivity extends Activity implements ApiRequest.ResultHandler 
         setRootGridLayout(ROWS, COLS);
         setVGap(15);
 
-        JPanel center_id = getChildPanel(4, 2);
+        UPanel center_id = getChildPanel(4, 2);
         center_id.setLayout(new BorderLayout());
         text_id = new UTextField();
         text_id.setHint(getContext().getString("account_tip"));
         center_id.add(text_id);
 
-        JPanel center_pass = getChildPanel(5, 2);
+        UPanel center_pass = getChildPanel(5, 2);
         center_pass.setLayout(new BorderLayout());
         text_pass = new JPasswordField();
         center_pass.add(text_pass);
 
-        JPanel center_btn = getChildPanel(6, 2);
+        UPanel center_btn = getChildPanel(6, 2);
         center_btn.setLayout(new BorderLayout());
         btn_login = new JButton(getContext().getString("login"));
         center_btn.add(btn_login);
 
-        JPanel rb_label = getChildPanel(7, 2);
+        UPanel rb_label = getChildPanel(7, 2);
         rb_label.setLayout(new BorderLayout());
-        JPanel north = new JPanel();
+        UPanel north = new UPanel();
         north.setLayout(new BorderLayout());
         rb_label.add(north, BorderLayout.NORTH);
 
@@ -108,7 +113,7 @@ public class LoginActivity extends Activity implements ApiRequest.ResultHandler 
         if (loginInfo != null) {
             text_id.setText(loginInfo.getAccount());
             text_pass.setText(loginInfo.getPass());
-            if (loginInfo.isAuthLogin()) {
+            if (loginInfo.isAuthLogin() && autoLogin) {
                 login();
             }
         }
@@ -153,7 +158,7 @@ public class LoginActivity extends Activity implements ApiRequest.ResultHandler 
         logger.info(login_user.toString());
         //登录
         LoginInfo loginInfo = new LoginInfo();
-        loginInfo.setAuthLogin(false);
+        loginInfo.setAuthLogin(true);
         loginInfo.setUserInfo(login_user.getUserInfo());
         loginInfo.setAccount(account);
         loginInfo.setPass(pass);
@@ -174,5 +179,11 @@ public class LoginActivity extends Activity implements ApiRequest.ResultHandler 
         UToast.show(this, code + ":" + message);
         btn_login.setEnabled(true);
         btn_login.setText(getContext().getString("login"));
+    }
+
+    public static void startActivity(Context context, boolean autoLogin) {
+        Intent intent = new Intent();
+        intent.put(INTENT_AUTO_LOGIN, autoLogin);
+        context.startActivity(LoginActivity.class, intent);
     }
 }

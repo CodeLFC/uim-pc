@@ -32,6 +32,7 @@ import java.util.function.Consumer;
 public class AttentionCard extends BaseCard<UserDTO> implements ApiRequest.ResultHandler, BiConsumer<Integer, Friend>, Consumer<UserInfo> {
     private URecyclerView<Friend> friendURecyclerView;
     private FriendListModel friendListModel;
+    private FriendCellRender friendCellRender;
     //service
     private UserDTO userDTO;
     private GetAttentionService getAttentionService;
@@ -54,18 +55,26 @@ public class AttentionCard extends BaseCard<UserDTO> implements ApiRequest.Resul
     public void initUI() {
         setLayout(new BorderLayout());
         friendURecyclerView = new URecyclerView<>();
-        friendURecyclerView.setCellRender(new FriendCellRender(getContext()));
-        friendListModel = new FriendListModel(friendURecyclerView);
+        friendCellRender = new FriendCellRender(getContext());
+        friendURecyclerView.setCellRender(friendCellRender);
+        friendListModel = new FriendListModel(friendURecyclerView, userDTO.getToken().getUserid());
         friendURecyclerView.setListModel(friendListModel);
         add(friendURecyclerView);
 
         friendURecyclerView.addItemClickedListener(this);
+
+        friendURecyclerView.refresh(1000);
     }
 
     @Override
     public void doBusiness() {
         friendListModel.removeAllElements();
         getAttentionService.request(userDTO.getToken(), friendPageInfo.getNextPage());
+    }
+
+    @Override
+    public void releaseResource() {
+        friendURecyclerView.stopRefresh();
     }
 
     @Override
@@ -102,4 +111,5 @@ public class AttentionCard extends BaseCard<UserDTO> implements ApiRequest.Resul
     public void accept(UserInfo userInfo) {
         UserInfoActivity.startActivity(getContext(), userDTO.getToken(), userInfo);
     }
+
 }

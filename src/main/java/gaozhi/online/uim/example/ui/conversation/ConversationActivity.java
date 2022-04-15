@@ -4,9 +4,8 @@ import gaozhi.online.uim.core.activity.Activity;
 import gaozhi.online.uim.core.activity.Context;
 import gaozhi.online.uim.core.activity.Intent;
 import gaozhi.online.uim.core.activity.layout.UGridBagLayout;
-import gaozhi.online.uim.core.activity.widget.UImageView;
-import gaozhi.online.uim.core.activity.widget.URecyclerView;
-import gaozhi.online.uim.core.activity.widget.UTextField;
+import gaozhi.online.uim.core.activity.widget.*;
+import gaozhi.online.uim.core.utils.ImageUtil;
 import gaozhi.online.uim.example.entity.Friend;
 import gaozhi.online.uim.example.entity.Token;
 import gaozhi.online.uim.example.im.conversation.Conversation;
@@ -18,11 +17,13 @@ import gaozhi.online.uim.example.im.service.UserPoolService;
 import gaozhi.online.uim.example.ui.conversation.chat.IMMsgCellRender;
 import gaozhi.online.uim.example.ui.conversation.chat.IMMsgListModel;
 import gaozhi.online.uim.example.ui.conversation.function.UpdateFriendActivity;
-import gaozhi.online.uim.example.utils.ImageUtil;
+import gaozhi.online.uim.example.utils.StringUtil;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.IOException;
 
 /**
@@ -31,7 +32,7 @@ import java.io.IOException;
  * @description: TODO 会话界面
  * @date 2022/3/15 16:32
  */
-public class ConversationActivity extends Activity implements Conversation.IMMessageConsumer {
+public class ConversationActivity extends Activity implements Conversation.IMMessageConsumer, KeyListener {
     //intent
     private static final String INTENT_TOKEN = "token";
     private static final String INTENT_FRIEND = "friend";
@@ -43,9 +44,9 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
 
     //ui
     //center
-    private URecyclerView<IMMessage> chatList;
+    private URecyclerView<IMMessage> chatRecycler;
     private IMMsgListModel imMsgListModel;
-    private JPanel showPanel;
+    private UPanel showPanel;
     private UTextField field_msg;
     private JButton btn_send_msg;
     //bottom
@@ -54,8 +55,8 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
     private UImageView image_file;
     private UImageView image_update_remark;
 
-    public ConversationActivity(Context context, Intent intent, String title) {
-        super(context, intent, title);
+    public ConversationActivity(Context context, Intent intent, String title, long id) {
+        super(context, intent, title, id);
     }
 
     @Override
@@ -74,19 +75,19 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
         setSize(screenSize.width / 2, screenSize.height / 2);
 
         setRootGridLayout(1, 1);
-        JPanel panel = getChildPanel(1, 1);
+        UPanel panel = getChildPanel(1, 1);
 
         panel.setLayout(new BorderLayout());
-        JPanel top = new JPanel();
+        UPanel top = new UPanel();
         FlowLayout flowLayout_top = new FlowLayout();
         flowLayout_top.setAlignment(FlowLayout.LEFT);
         top.setLayout(flowLayout_top);
         panel.add(top, BorderLayout.NORTH);
-        JPanel center = new JPanel();
+        UPanel center = new UPanel();
         panel.add(center, BorderLayout.CENTER);
-        JPanel right = new JPanel();
+        UPanel right = new UPanel();
         panel.add(right, BorderLayout.EAST);
-        JPanel bottom = new JPanel();
+        UPanel bottom = new UPanel();
         FlowLayout flowLayout_bottom = new FlowLayout();
         flowLayout_bottom.setAlignment(FlowLayout.LEFT);
         bottom.setLayout(flowLayout_bottom);
@@ -97,10 +98,10 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
         UGridBagLayout gridBagLayout = new UGridBagLayout(center);
         center.setLayout(gridBagLayout);
         gridBagLayout.setWeight(1, 1);
-        chatList = new URecyclerView<>();
-        gridBagLayout.addComponent(chatList);
+        chatRecycler = new URecyclerView<>();
+        gridBagLayout.addComponent(chatRecycler);
         gridBagLayout.setWeight(0.5, 1);
-        showPanel = new JPanel();
+        showPanel = new UPanel();
         //暂时屏蔽右半部分
         // gridBagLayout.addComponent(showPanel);
         //------------------------bottom
@@ -127,10 +128,10 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
 
     //初始化中间部分的布局
     private void initCenterLayout() {
-        imMsgListModel = new IMMsgListModel(chatList);
-        chatList.setListModel(imMsgListModel);
-        chatList.setCellRender(new IMMsgCellRender(getContext()));
-        JPanel panel_enter = new JPanel();
+        imMsgListModel = new IMMsgListModel(chatRecycler);
+        chatRecycler.setListModel(imMsgListModel);
+        chatRecycler.setCellRender(new IMMsgCellRender(getContext()));
+        UPanel panel_enter = new UPanel();
         UGridBagLayout gridBagLayout = new UGridBagLayout(panel_enter);
         gridBagLayout.setWeight(2, 0);
         field_msg = new UTextField();
@@ -143,9 +144,11 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
         gridBagLayout.addComponent(btn_send_msg);
         gridBagLayout.setWeight(0.01, 0);
         gridBagLayout.addComponent(new Container());
-        chatList.setBottom(panel_enter);
+        chatRecycler.setBottom(panel_enter);
 
         btn_send_msg.addActionListener(this);
+
+        field_msg.addKeyListener(this);
     }
 
     @Override
@@ -155,21 +158,34 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
             setTitle(friend.getRemark() + "[" + friendInfo.getNick() + "] mark:" + friendInfo.getRemark());
             setIcon(friendInfo.getHeadUrl());
         });
-        logger.info("添加历史消息");
+
         for (IMMessage message : conversation.getHistoryMessage()) {
             imMsgListModel.addElement(message, true);
-            logger.info("添加历史消息："+message);
+            logger.info("添加历史消息：" + message);
         }
         conversation.addConsumer(this);
+        //清零未读消息
+        conversation.setUnReadMessageCount(0);
+
+        chatRecycler.refresh(1000);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == btn_send_msg) {
+            String content = field_msg.getUText();
+            if (StringUtil.isEmpty(content)) {
+                UToast.show(this, getContext().getString("tip_content_is_empty"));
+                return;
+            }
+            if (content.length() > 1000) {
+                UToast.show(this, getContext().getString("tip_content_is_too_long"));
+                return;
+            }
             IMMessage msg = new IMMessage();
             msg.setTime(System.currentTimeMillis());
             msg.setMsgType(IMMsgType.TEXT);
-            msg.setData(IMMessage.Codec.getDataCoder(IMMsgType.TEXT).parse2Binary(field_msg.getUText()));
+            msg.setData(IMMessage.Codec.getDataCoder(IMMsgType.TEXT).parse2Binary(content));
             msg.setFromId(conversation.getSelfId());
             msg.setToId(conversation.getFriendId());
             int len = 0;
@@ -208,8 +224,34 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
     }
 
     @Override
+    public void releaseResource() {
+        super.releaseResource();
+        chatRecycler.stopRefresh();
+        conversation.removeConsumer(this);
+    }
+
+    @Override
     public void accept(IMMessage message) {
         logger.info("收到消息：" + message.toString());
         imMsgListModel.addElement(message, true);
+        conversation.setUnReadMessageCount(0);
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+        if (e.getKeyChar() == KeyEvent.VK_ENTER) {
+            //发送消息
+            btn_send_msg.doClick();
+        }
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+
     }
 }

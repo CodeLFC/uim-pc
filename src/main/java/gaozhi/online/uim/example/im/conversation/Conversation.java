@@ -22,6 +22,7 @@ public class Conversation implements IMMsgService.IMMsgConsumer {
     private final IMMsgService imMsgService;
     private final List<IMMessageConsumer> consumers = new LinkedList<>();
     private final List<IMMessage> historyMessage = new LinkedList<>();
+    private int unReadMessageCount;
 
     public Conversation(long selfId, long friendId, IMMsgService imMsgService) {
         this.selfId = selfId;
@@ -53,12 +54,25 @@ public class Conversation implements IMMsgService.IMMsgConsumer {
             consumer.accept(message);
         }
     }
-    private void addMessage(IMMessage message){
+
+    public void setUnReadMessageCount(int unReadMessageCount) {
+        this.unReadMessageCount = unReadMessageCount;
+    }
+
+    public int getUnReadMessageCount() {
+        return unReadMessageCount;
+    }
+
+    private void addMessage(IMMessage message) {
+        if(message.getToId()==selfId) {
+            unReadMessageCount++;
+        }
         historyMessage.add(message);
         if (historyMessage.size() > 100) {
             historyMessage.remove(0);
         }
     }
+
     public int send2Center(IMMessage msg) throws IOException {
         addMessage(msg);
         return imMsgService.sendIMMsg2IMServer(IMMessage.Codec.encode(selfId, friendId, msg));
@@ -77,6 +91,4 @@ public class Conversation implements IMMsgService.IMMsgConsumer {
     public interface IMMessageConsumer extends Consumer<IMMessage> {
 
     }
-
-
 }

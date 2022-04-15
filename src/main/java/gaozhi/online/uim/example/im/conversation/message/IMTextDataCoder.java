@@ -24,4 +24,9 @@ public class IMTextDataCoder implements IMMessage.DataCoder<String> {
     public String parse2T(byte[] data) {
         return ByteUtil.bytesToString(data);
     }
+
+    @Override
+    public String parse2Tip(byte[] data) {
+        return ByteUtil.bytesToString(data);
+    }
 }

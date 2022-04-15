@@ -11,7 +11,8 @@ import java.awt.*;
  */
 public class FontClass {
     public enum FontExample {
-        SONG(new Font("宋体", 0, 16));
+        SONG16(new Font("宋体", Font.PLAIN, 16)),
+        SONG14(new Font("宋体", Font.PLAIN, 14));
         private final Font font;
 
         FontExample(Font font) {
@@ -24,6 +25,7 @@ public class FontClass {
     }
 
     public static void loadIndyFont(FontExample font) {
+
         UIManager.put("CheckBox.font", font.getFont());
         UIManager.put("Tree.font",  font.getFont());
         UIManager.put("Viewport.font",  font.getFont());

@@ -86,6 +86,7 @@ public class IMMessage {
 
         T parse2T(byte[] data);
 
+        String parse2Tip(byte[] data);
     }
 
     /**
@@ -120,8 +121,8 @@ public class IMMessage {
             message.setMsgType(IMMsgType.getType(src.getMsgType()));
             message.setTime(src.getTime());
             message.setData(src.getData());
-            message.fromId=src.getFromId();
-            message.toId=src.getToId();
+            message.fromId = src.getFromId();
+            message.toId = src.getToId();
             return message;
         }
     }
