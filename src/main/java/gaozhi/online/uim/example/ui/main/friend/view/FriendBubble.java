@@ -36,6 +36,7 @@ public class FriendBubble extends UPanel implements Consumer<UserInfo> {
     private ULabel label_friendship;
     private ULabel label_unread;
     private Conversation conversation;
+    private long friendId;
 
     public FriendBubble(Context context) {
         this.context = context;
@@ -71,12 +72,21 @@ public class FriendBubble extends UPanel implements Consumer<UserInfo> {
     public void bindView(Friend friend) {
 
         UserPoolService userPoolService = IMServiceApplication.getInstance().getServiceInstance(UserPoolService.class);
-        long friendId = friend.getFriendId();
+        friendId = friend.getFriendId();
         if (friendId == userPoolService.getSelfId()) {
             friendId = friend.getUserid();
         }else{
             label_friendship.setText(friend.getRemark());
         }
+        userPoolService.getUserInfo(friendId, false, this);
+    }
+
+    @Override
+    public void accept(UserInfo userInfo) {
+        head.setImageUrl(userInfo.getHeadUrl(), defaultHead, 50, false);
+        label_name.setText(userInfo.getNick());
+        label_remark.setText(userInfo.getRemark());
+        //System.out.println("刷新-用户信息:"+conversation.getUnReadMessageCount());
         //
         if (conversation == null) {
             conversation = IMServiceApplication.getInstance().getServiceInstance(ConversationService.class).getConversation(friendId);
@@ -92,16 +102,9 @@ public class FriendBubble extends UPanel implements Consumer<UserInfo> {
             }
             //System.out.println("刷新-未读信息:"+conversation.getUnReadMessageCount());
             label_remark.setText(dataCoder.parse2Tip(message.getData()));
-            label_unread.setText("" + conversation.getUnReadMessageCount());
+            if(conversation.getUnReadMessageCount()>0) {
+                label_unread.setText("" + conversation.getUnReadMessageCount());
+            }
         }
-        userPoolService.getUserInfo(friendId, false, this);
-    }
-
-    @Override
-    public void accept(UserInfo userInfo) {
-        head.setImageUrl(userInfo.getHeadUrl(), defaultHead, 50, false);
-        label_name.setText(userInfo.getNick());
-        label_remark.setText(userInfo.getRemark());
-        //System.out.println("刷新-用户信息:"+conversation.getUnReadMessageCount());
     }
 }
