@@ -104,8 +104,8 @@ public class UserInfoActivity extends Activity implements ApiRequest.ResultHandl
     public void initUI() {
         setResizable(false);
         setRootGridLayout(ROWS, COLS);
-        setVGap(15);
-        setHGap(15);
+        setVGap(10);
+        setHGap(10);
         static_id = new UTextField();
         static_vip = new UTextField();
         static_status = new UTextField();

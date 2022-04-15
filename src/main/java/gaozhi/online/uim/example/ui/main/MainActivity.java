@@ -59,7 +59,7 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
     private UImageView image_info;
     private UImageView image_exit_account;
     private UImageView image_server;
-    private JLabel label_server;
+    //private JLabel label_server;
     private JLabel label_beat;
 
     //param
@@ -149,12 +149,12 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
             e.printStackTrace();
         }
 
-        label_server = new JLabel(getContext().getString("tip_server"));
+       // label_server = new JLabel(getContext().getString("tip_server"));
         label_beat = new JLabel();
         bottom.add(image_info);
         bottom.add(image_exit_account);
         bottom.add(image_server);
-        bottom.add(label_server);
+      //  bottom.add(label_server);
         bottom.add(label_beat);
         //---------listener
         image_info.setActionListener(this);
@@ -173,7 +173,7 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
 
         CSBeatService beatService = IMServiceApplication.getInstance().getServiceInstance(CSBeatService.class);
         beatService.addBeatResponseListener(uClient ->{
-         label_beat.setText("beat:" + uClient.getIp() + ":" + uClient.getPort() + " " + DateTimeUtil.getHMSTime(uClient.getUpdateTime()));
+         label_beat.setText(uClient.getIp() + ":" + uClient.getPort() + " " + DateTimeUtil.getHMSTime(uClient.getUpdateTime()));
          if(!isIconified()){
              stopTwinkle();
          }
@@ -234,7 +234,7 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
     @Override
     public void start(int id) {
         if (id == getIMServerService.getId()) {
-            label_server.setText(getContext().getString("tip_pull_im_server_info"));
+            //label_server.setText(getContext().getString("tip_pull_im_server_info"));
             image_server.setActionListener(null);
         }
     }
@@ -250,7 +250,7 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
 
             IMServiceApplication.getInstance().getServiceInstance(IMMsgService.class).startService();
             IMServiceApplication.getInstance().getServiceInstance(CSBeatService.class).startService();
-            label_server.setText(imServer.getRemark());
+           // label_server.setText(imServer.getRemark());
             image_server.setActionListener(this);
         }
     }
