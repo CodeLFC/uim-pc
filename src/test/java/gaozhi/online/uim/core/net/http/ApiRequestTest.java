@@ -1,6 +1,7 @@
 package gaozhi.online.uim.core.net.http;
 
-import gaozhi.online.uim.core.net.Result;
+import gaozhi.online.ugui.core.net.Result;
+import gaozhi.online.ugui.core.net.http.ApiRequest;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;

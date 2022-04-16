@@ -19,16 +19,11 @@
             <artifactId>ubtp-core</artifactId>
             <version>1.0</version>
         </dependency>
-        <!--美化-->
+        <!--gui核心-->
         <dependency>
-            <groupId>org.pushingpixels.substance</groupId>
-            <artifactId>api</artifactId>
-            <version>1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.pushingpixels.trident</groupId>
-            <artifactId>api</artifactId>
-            <version>1.0</version>
+            <groupId>gaozhi.online</groupId>
+            <artifactId>ugui</artifactId>
+            <version>0.1</version>
         </dependency>
         <!--++++++++++++++++++++++++++++GSON依赖++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
         <dependency>

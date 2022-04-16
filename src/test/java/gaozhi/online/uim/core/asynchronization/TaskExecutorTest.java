@@ -1,5 +1,6 @@
 package gaozhi.online.uim.core.asynchronization;
 
+import gaozhi.online.ugui.core.asynchronization.TaskExecutor;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,2 +1,0 @@
-mvn install:install-file -DgroupId=org.pushingpixels.substance -DartifactId=api -Dversion=1.0 -Dpackaging=jar -Dfile=substance.jar
-mvn install:install-file -DgroupId=org.pushingpixels.trident -DartifactId=api -Dversion=1.0 -Dpackaging=jar -Dfile=trident.jar
