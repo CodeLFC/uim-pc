@@ -38,7 +38,7 @@ public class ConversationService implements UService, IMMsgService.IMMsgConsumer
           conversationMap.clear();
     }
 
-    public Conversation getConversation(long friendId) {
+    public synchronized Conversation getConversation(long friendId) {
         if (!containsConversation(friendId)) {
             conversationMap.put(friendId, new Conversation(userPoolService.getSelfId(), friendId, imMsgService));
         }

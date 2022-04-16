@@ -61,9 +61,6 @@ public class UImageView extends ULabel {
                     scaleImage = ImageUtil.convertCircular(image, size);
                 }
                 setImage(scaleImage);
-                new TaskExecutor().executeInUIThread(() -> {
-
-                });
             } catch (IOException e) {
                 setImage(ImageUtil.getScaleImage(defaultImage, size));
                 e.printStackTrace();

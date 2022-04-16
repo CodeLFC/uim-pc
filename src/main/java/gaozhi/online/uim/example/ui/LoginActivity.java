@@ -142,7 +142,12 @@ public class LoginActivity extends Activity implements ApiRequest.ResultHandler 
             return;
         }
         logger.info(account + ":" + pass);
-        UserAuth.AccountType accountType = account.length() == 13 ? UserAuth.AccountType.PHONE : UserAuth.AccountType.ID;
+        UserAuth.AccountType accountType = UserAuth.AccountType.ID;
+        //处理手机号
+        if(account.length() == 11){
+            accountType = UserAuth.AccountType.PHONE;
+            account="86"+account;
+        }
         loginService.request(accountType, account, pass, Token.Device.COMPUTER.getDevice());
     }
 
@@ -160,6 +165,10 @@ public class LoginActivity extends Activity implements ApiRequest.ResultHandler 
         LoginInfo loginInfo = new LoginInfo();
         loginInfo.setAuthLogin(true);
         loginInfo.setUserInfo(login_user.getUserInfo());
+        //   处理手机号
+        if(account.length() == 13){
+            account = account.substring(2);
+        }
         loginInfo.setAccount(account);
         loginInfo.setPass(pass);
         try {
