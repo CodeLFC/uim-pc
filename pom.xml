@@ -26,11 +26,11 @@
             <version>0.1</version>
         </dependency>
         <!--++++++++++++++++++++++++++++GSON依赖++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.9.0</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.google.code.gson</groupId>-->
+<!--            <artifactId>gson</artifactId>-->
+<!--            <version>2.9.0</version>-->
+<!--        </dependency>-->
         <!-- pageHelper依赖 -->
         <dependency>
             <groupId>com.github.pagehelper</groupId>
