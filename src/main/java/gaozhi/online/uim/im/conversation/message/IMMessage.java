@@ -1,8 +1,8 @@
-package gaozhi.online.uim.im.conversation;
+package gaozhi.online.uim.im.conversation.message;
 
-import gaozhi.online.uim.im.conversation.message.IMMsgType;
 import gaozhi.online.uim.im.entity.IMMsg;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -59,7 +59,6 @@ public class IMMessage {
         this.data = data;
     }
 
-
     @Override
     public String toString() {
         return "IMMessage{" +
@@ -67,7 +66,7 @@ public class IMMessage {
                 ", toId=" + toId +
                 ", msgType=" + msgType +
                 ", time=" + time +
-                ", data=" + Codec.getDataCoder(getMsgType()).parse2T(getData()) +
+                ", dataLen=" + data.length +
                 '}';
     }
 
@@ -123,6 +122,39 @@ public class IMMessage {
             message.fromId = src.getFromId();
             message.toId = src.getToId();
             return message;
+        }
+    }
+
+    /**
+     * @author LiFucheng
+     * @version 1.0
+     * @description: TODO 消息类型
+     * @date 2022/3/18 20:09
+     */
+    public enum IMMsgType {
+        TEXT(1000),
+        REAL_AUDIO(1001),
+        REAL_VIDEO(1002),
+        FILE(1003),
+        P2PNetInfoBeat(1004),
+        P2PConnectionSniffing(1005);
+        private final int type;
+
+        IMMsgType(int type) {
+            this.type = type;
+        }
+
+        public int getType() {
+            return type;
+        }
+
+        public static IMMsgType getType(int type) {
+            for (IMMsgType typeE : IMMsgType.values()) {
+                if (typeE.getType() == type) {
+                    return typeE;
+                }
+            }
+            return null;
         }
     }
 }

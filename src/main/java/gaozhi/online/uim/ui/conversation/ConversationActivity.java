@@ -9,14 +9,15 @@ import gaozhi.online.ugui.core.utils.ImageUtil;
 import gaozhi.online.uim.entity.Friend;
 import gaozhi.online.uim.entity.Token;
 import gaozhi.online.uim.im.conversation.Conversation;
-import gaozhi.online.uim.im.conversation.IMMessage;
-import gaozhi.online.uim.im.conversation.message.IMMsgType;
+import gaozhi.online.uim.im.conversation.message.IMMessage;
+import gaozhi.online.uim.im.entity.UClient;
 import gaozhi.online.uim.im.service.ConversationService;
 import gaozhi.online.uim.im.service.IMServiceApplication;
 import gaozhi.online.uim.im.service.UserPoolService;
 import gaozhi.online.uim.ui.conversation.chat.IMMsgCellRender;
 import gaozhi.online.uim.ui.conversation.chat.IMMsgListModel;
 import gaozhi.online.uim.ui.conversation.function.UpdateFriendActivity;
+import gaozhi.online.uim.utils.DateTimeUtil;
 import gaozhi.online.uim.utils.StringUtil;
 
 import javax.swing.*;
@@ -54,6 +55,8 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
     private UImageView image_real_audio;
     private UImageView image_file;
     private UImageView image_update_remark;
+    //top
+    private String title;
 
     public ConversationActivity(Context context, Intent intent, String title, long id) {
         super(context, intent, title, id);
@@ -155,7 +158,8 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
     public void doBusiness() {
         UserPoolService userPoolService = IMServiceApplication.getInstance().getServiceInstance(UserPoolService.class);
         userPoolService.getUserInfo(friend.getFriendId(), true, friendInfo -> {
-            setTitle(friend.getRemark() + "[" + friendInfo.getNick() + "] mark:" + friendInfo.getRemark());
+            title = friend.getRemark() + "[" + friendInfo.getNick() + "] mark:" + friendInfo.getRemark();
+            setTitle(title);
             setIcon(friendInfo.getHeadUrl());
         });
 
@@ -184,13 +188,13 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
             }
             IMMessage msg = new IMMessage();
             msg.setTime(System.currentTimeMillis());
-            msg.setMsgType(IMMsgType.TEXT);
-            msg.setData(IMMessage.Codec.getDataCoder(IMMsgType.TEXT).parse2Binary(content));
+            msg.setMsgType(IMMessage.IMMsgType.TEXT);
+            msg.setData(IMMessage.Codec.getDataCoder(IMMessage.IMMsgType.TEXT).parse2Binary(content));
             msg.setFromId(conversation.getSelfId());
             msg.setToId(conversation.getFriendId());
             int len = 0;
             try {
-                len = conversation.send2Center(msg);
+                len = conversation.sendIMMessage(msg);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -234,6 +238,7 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
     public void accept(IMMessage message) {
         logger.info("收到消息：" + message.toString());
         imMsgListModel.addElement(message, true);
+        setTitle(title + " | p2p:" + conversation.getP2PConnectionState().getDescription());
         conversation.setUnReadMessageCount(0);
     }
 

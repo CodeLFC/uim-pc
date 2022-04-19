@@ -9,7 +9,7 @@ import gaozhi.online.ugui.core.utils.ImageUtil;
 import gaozhi.online.uim.entity.UserInfo;
 import gaozhi.online.uim.entity.Friend;
 import gaozhi.online.uim.im.conversation.Conversation;
-import gaozhi.online.uim.im.conversation.IMMessage;
+import gaozhi.online.uim.im.conversation.message.IMMessage;
 import gaozhi.online.uim.im.service.ConversationService;
 import gaozhi.online.uim.im.service.IMServiceApplication;
 import gaozhi.online.uim.im.service.UserPoolService;

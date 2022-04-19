@@ -1,7 +1,7 @@
 package gaozhi.online.uim.ui.conversation.chat.msg;
 
 import gaozhi.online.ugui.core.activity.widget.UPanel;
-import gaozhi.online.uim.im.conversation.IMMessage;
+import gaozhi.online.uim.im.conversation.message.IMMessage;
 
 /**
  * @author LiFucheng

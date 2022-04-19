@@ -3,7 +3,7 @@ package gaozhi.online.uim.ui.conversation.chat;
 import gaozhi.online.ugui.core.activity.Context;
 import gaozhi.online.ugui.core.activity.widget.UPanel;
 import gaozhi.online.ugui.core.activity.widget.URecyclerCellRender;
-import gaozhi.online.uim.im.conversation.IMMessage;
+import gaozhi.online.uim.im.conversation.message.IMMessage;
 import gaozhi.online.uim.im.service.IMServiceApplication;
 import gaozhi.online.uim.im.service.UserPoolService;
 import gaozhi.online.uim.ui.conversation.chat.msg.IMMsgBubble;

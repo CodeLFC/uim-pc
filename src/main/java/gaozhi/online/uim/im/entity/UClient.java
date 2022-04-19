@@ -12,8 +12,9 @@ public class UClient {
     private long id;
     private String ip;
     private int port;
+    private String localIp;
+    private int localPort;
     private long updateTime;
-    private SocketAddress address;
 
     public long getId() {
         return id;
@@ -39,6 +40,22 @@ public class UClient {
         this.port = port;
     }
 
+    public String getLocalIp() {
+        return localIp;
+    }
+
+    public void setLocalIp(String localIp) {
+        this.localIp = localIp;
+    }
+
+    public int getLocalPort() {
+        return localPort;
+    }
+
+    public void setLocalPort(int localPort) {
+        this.localPort = localPort;
+    }
+
     public long getUpdateTime() {
         return updateTime;
     }
@@ -47,20 +64,14 @@ public class UClient {
         this.updateTime = updateTime;
     }
 
-    public SocketAddress getAddress() {
-        return address;
-    }
-
-    public void setAddress(SocketAddress address) {
-        this.address = address;
-    }
-
     @Override
     public String toString() {
         return "UClient{" +
                 "id=" + id +
                 ", ip='" + ip + '\'' +
                 ", port=" + port +
+                ", localIp='" + localIp + '\'' +
+                ", localPort=" + localPort +
                 ", updateTime=" + updateTime +
                 '}';
     }

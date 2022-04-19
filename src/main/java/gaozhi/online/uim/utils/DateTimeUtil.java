@@ -17,7 +17,7 @@ public class DateTimeUtil {
     private static SimpleDateFormat birthFormat = new SimpleDateFormat("yyyy年MM月dd日");
     private static SimpleDateFormat chatFormat = new SimpleDateFormat("yy-MM-dd HH:mm:ss");
     private static SimpleDateFormat fileNameFormat = new SimpleDateFormat("yy-MM-dd-HH-mm-ss");
-    private static SimpleDateFormat talkFormat = new SimpleDateFormat("yyyy-MM-dd  HH:mm");
+    private static SimpleDateFormat fullFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm-ss");
     private static SimpleDateFormat hmsFormat = new SimpleDateFormat("HH:mm:ss");
 
     public static String getBirthTime(long time) {
@@ -32,8 +32,8 @@ public class DateTimeUtil {
         return fileNameFormat.format(new Date(time));
     }
 
-    public static String getTalkTime(long time) {
-        return talkFormat.format(new Date(time));
+    public static String getFullTime(long time) {
+        return fullFormat.format(new Date(time));
     }
 
     public static String getHMSTime(long time) {

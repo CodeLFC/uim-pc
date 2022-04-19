@@ -27,7 +27,7 @@ public class CSBeatService implements UService, UBTPSocket.UMsgConsumer, Runnabl
     private IMServiceApplication imServiceApplication;
     private IMMsgService imMsgService;
     private UserPoolService userPoolService;
-    private List<Consumer<UClient>> beatResponseListenerList;
+    private final List<Consumer<UClient>> beatResponseListenerList;
     //client & self
     private final Gson gson = new Gson();
 

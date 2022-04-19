@@ -1,7 +1,6 @@
 package gaozhi.online.uim.ui.conversation.chat.msg;
 
-import gaozhi.online.uim.im.conversation.IMMessage;
-import gaozhi.online.uim.im.conversation.message.IMMsgType;
+import gaozhi.online.uim.im.conversation.message.IMMessage;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -29,14 +28,14 @@ public class TextMsgView extends IMMsgView {
         textArea.setBorder(new EmptyBorder(6, 6, 6, 6));
         add(textArea);
         textArea.setOpaque(false);
+        textArea.setLineWrap(true);
     }
 
     @Override
     void bindView(IMMessage msg, boolean isSelf) {
+        IMMessage.DataCoder<String> dataCoder = IMMessage.Codec.getDataCoder(IMMessage.IMMsgType.TEXT);
         textArea.setColumns(rowLen);
-        IMMessage.DataCoder<String> dataCoder = IMMessage.Codec.getDataCoder(IMMsgType.TEXT);
         textArea.setText(dataCoder.parse2T(msg.getData()));
-        textArea.setLineWrap(true);
         this.isSelf = isSelf;
     }
 

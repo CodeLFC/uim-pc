@@ -10,6 +10,7 @@ import gaozhi.online.uim.im.entity.UServer;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -28,7 +29,7 @@ public class IMMsgService extends UBTPSocket implements UService, UBTPSocket.UMs
     private UServer imServerTemp = new UServer();
     private SocketAddress imServerAddress;
 
-    public IMMsgService(int port, int mtu) {
+    public IMMsgService(int port, int mtu) throws UnknownHostException {
         super(port, mtu);
         addUMsgConsumer(this);
     }

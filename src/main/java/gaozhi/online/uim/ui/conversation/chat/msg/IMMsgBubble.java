@@ -6,9 +6,8 @@ import gaozhi.online.ugui.core.activity.widget.UPanel;
 import gaozhi.online.ugui.core.asynchronization.TaskExecutor;
 import gaozhi.online.ugui.core.utils.ImageUtil;
 import gaozhi.online.uim.entity.UserInfo;
-import gaozhi.online.uim.im.conversation.IMMessage;
+import gaozhi.online.uim.im.conversation.message.IMMessage;
 import gaozhi.online.uim.im.service.IMServiceApplication;
-import gaozhi.online.uim.im.conversation.message.IMMsgType;
 import gaozhi.online.uim.im.service.UserPoolService;
 import gaozhi.online.uim.utils.DateTimeUtil;
 
@@ -18,6 +17,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.logging.Logger;
 
 /**
  * @author LiFucheng
@@ -26,6 +26,7 @@ import java.util.function.Consumer;
  * @date 2022/3/17 10:48
  */
 public class IMMsgBubble extends UPanel implements Consumer<UserInfo> {
+    private final Logger logger = Logger.getGlobal();
     private final Context context;
     //布局
     private FlowLayout flowLayout;
@@ -43,10 +44,10 @@ public class IMMsgBubble extends UPanel implements Consumer<UserInfo> {
     //显示内容
     private UPanel panelMsg;
     //消息内容显示区域
-    private Map<IMMsgType, IMMsgView> imMsgViewMap;
+    private Map<IMMessage.IMMsgType, IMMsgView> imMsgViewMap;
     //是否已经设置了布局
     private boolean isBindView = false;
-    private final TaskExecutor taskExecutor = new TaskExecutor();
+
     public IMMsgBubble(Context context) {
         this.context = context;
         imMsgViewMap = new HashMap<>();
@@ -78,8 +79,8 @@ public class IMMsgBubble extends UPanel implements Consumer<UserInfo> {
     }
 
     private void registerMsgView() {
-        TextMsgView textMsgView = new TextMsgView();
-        imMsgViewMap.put(IMMsgType.TEXT, textMsgView);
+        //注册文本视图
+        imMsgViewMap.put(IMMessage.IMMsgType.TEXT, new TextMsgView());
     }
 
 
@@ -88,7 +89,8 @@ public class IMMsgBubble extends UPanel implements Consumer<UserInfo> {
         //----------------动态加载显示内容
         IMMsgView view = imMsgViewMap.get(msg.getMsgType());
         if (view == null) {
-            throw new NullPointerException("没有注册此消息类型所对应的视图");
+            logger.warning("没有注册此消息类型所对应的视图:"+msg.getMsgType());
+            return;
         }
         UserPoolService userPoolService = IMServiceApplication.getInstance().getServiceInstance(UserPoolService.class);
         boolean isSelf = msg.getFromId() == userPoolService.getSelfId();

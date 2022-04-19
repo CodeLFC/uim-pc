@@ -1,7 +1,7 @@
 package gaozhi.online.uim.ui.conversation.chat;
 
 import gaozhi.online.ugui.core.activity.widget.URecyclerView;
-import gaozhi.online.uim.im.conversation.IMMessage;
+import gaozhi.online.uim.im.conversation.message.IMMessage;
 
 import javax.swing.*;
 
@@ -18,9 +18,13 @@ public class IMMsgListModel extends DefaultListModel<IMMessage> {
         this.recyclerView = recyclerView;
     }
 
-    public void addElement(IMMessage element,boolean move2End) {
+    public synchronized void addElement(IMMessage element, boolean move2End) {
+        //p2p消息
+        if (element.getMsgType() == IMMessage.IMMsgType.P2PNetInfoBeat||element.getMsgType() == IMMessage.IMMsgType.P2PConnectionSniffing) {
+            return;
+        }
         super.addElement(element);
-        if(move2End) {
+        if (move2End) {
             recyclerView.move2End();
         }
     }

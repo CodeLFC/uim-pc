@@ -1,14 +1,16 @@
 package gaozhi.online.uim;
 
 import gaozhi.online.ugui.core.Application;
-import gaozhi.online.uim.im.conversation.IMMessage;
-import gaozhi.online.uim.im.conversation.message.IMTextDataCoder;
+import gaozhi.online.uim.im.conversation.message.IMMessage;
+import gaozhi.online.uim.im.conversation.message.IMP2PNetInfoBeat;
+import gaozhi.online.uim.im.conversation.message.IMString;
 import gaozhi.online.uim.im.service.*;
 import gaozhi.online.uim.ui.LoginActivity;
 import gaozhi.online.uim.utils.FileUtil;
 import org.pushingpixels.substance.api.skin.*;
 
 import java.io.IOException;
+import java.net.UnknownHostException;
 
 /**
  * @author LiFucheng
@@ -27,10 +29,12 @@ public class UIMApplication extends Application {
 
     private void registerMsgType() {
         //注册文本消息类型编解码器
-        IMMessage.Codec.registerDataCoder(new IMTextDataCoder());
+        IMMessage.Codec.registerDataCoder(new IMString.DataCoder());
+        //注册p2p心跳类型消息编解码器
+        IMMessage.Codec.registerDataCoder(new IMP2PNetInfoBeat.DataCoder());
     }
 
-    public void startService() {
+    public void startService() throws UnknownHostException {
         //用户池服务
         UserPoolService userPoolService = new UserPoolService();
         //底层消息服务
