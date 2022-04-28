@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import gaozhi.online.ugui.core.activity.Activity;
 import gaozhi.online.ugui.core.activity.Context;
 import gaozhi.online.ugui.core.activity.Intent;
+import gaozhi.online.ugui.core.activity.widget.UButton;
 import gaozhi.online.ugui.core.activity.widget.UPanel;
 import gaozhi.online.ugui.core.activity.widget.UTextField;
 import gaozhi.online.ugui.core.activity.widget.UToast;
@@ -32,8 +33,8 @@ public class RegisterActivity extends Activity implements ApiRequest.ResultHandl
     private static final int ROWS = 8;
     private UTextField text_phone;
     private UTextField text_verify_code;
-    private JButton btn_send;
-    private JButton btn_register;
+    private UButton btn_send;
+    private UButton btn_register;
     private UTextField text_new_pass;
 
     private Timer timer;
@@ -74,7 +75,7 @@ public class RegisterActivity extends Activity implements ApiRequest.ResultHandl
         text_verify_code = new UTextField();
         text_verify_code.setHint(getContext().getString("tip_enter_verify_code"));
         panelVerifyCode.add(text_verify_code);
-        btn_send = new JButton(getContext().getString("send"));
+        btn_send = new UButton(getContext().getString("send"));
         panelVerifyCode.add(btn_send, BorderLayout.EAST);
 
         UPanel panelPass = getChildPanel(6, 2);
@@ -82,7 +83,7 @@ public class RegisterActivity extends Activity implements ApiRequest.ResultHandl
         text_new_pass = new UTextField();
         text_new_pass.setHint(getContext().getString("tip_new_pass"));
         panelPass.add(text_new_pass);
-        btn_register = new JButton(getContext().getString("register"));
+        btn_register = new UButton(getContext().getString("register"));
         UPanel panelRegister = getChildPanel(7, 2);
         panelRegister.setLayout(new BorderLayout());
         panelRegister.add(btn_register);

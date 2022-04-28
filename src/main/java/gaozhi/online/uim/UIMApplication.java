@@ -1,14 +1,15 @@
 package gaozhi.online.uim;
 
 import gaozhi.online.ugui.core.Application;
+import gaozhi.online.ugui.core.resource.StyleClass;
 import gaozhi.online.uim.im.conversation.message.IMMessage;
 import gaozhi.online.uim.im.conversation.message.IMP2PNetInfoBeat;
 import gaozhi.online.uim.im.conversation.message.IMString;
 import gaozhi.online.uim.im.service.*;
 import gaozhi.online.uim.ui.LoginActivity;
 import gaozhi.online.uim.utils.FileUtil;
-import org.pushingpixels.substance.api.skin.*;
 
+import java.awt.*;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
@@ -51,10 +52,13 @@ public class UIMApplication extends Application {
     }
 
     public static void main(String[] args) throws IOException {
+        StyleClass.setFont(StyleClass.FontExample.SONG16.getFont());
+        StyleClass.setForeground(Color.WHITE);
+        StyleClass.setBackground(Color.GRAY);
+        StyleClass.setPanelColor(Color.DARK_GRAY);
         try {
             UIMApplication application = new UIMApplication();
             application.startService();
-            application.configSkin(new BusinessBlueSteelSkin());
             application.startActivity(LoginActivity.class);
         } catch (Exception e) {
             FileUtil.write("exception.txt", e.getMessage(), true);

@@ -4,10 +4,7 @@ import com.google.gson.Gson;
 import gaozhi.online.ugui.core.activity.Activity;
 import gaozhi.online.ugui.core.activity.Context;
 import gaozhi.online.ugui.core.activity.Intent;
-import gaozhi.online.ugui.core.activity.widget.ULabel;
-import gaozhi.online.ugui.core.activity.widget.UPanel;
-import gaozhi.online.ugui.core.activity.widget.UTextField;
-import gaozhi.online.ugui.core.activity.widget.UToast;
+import gaozhi.online.ugui.core.activity.widget.*;
 import gaozhi.online.ugui.core.net.Result;
 import gaozhi.online.ugui.core.net.http.ApiRequest;
 import gaozhi.online.uim.entity.LoginInfo;
@@ -37,8 +34,8 @@ public class LoginActivity extends Activity implements ApiRequest.ResultHandler 
     private static final int COLS = 3;
     private static final int ROWS = 8;
     private UTextField text_id;
-    private JPasswordField text_pass;
-    private JButton btn_login;
+    private UPasswordField text_pass;
+    private UButton btn_login;
     private ULabel text_register;
     private ULabel text_find_pass;
     private LoginService loginService;
@@ -74,12 +71,12 @@ public class LoginActivity extends Activity implements ApiRequest.ResultHandler 
 
         UPanel center_pass = getChildPanel(5, 2);
         center_pass.setLayout(new BorderLayout());
-        text_pass = new JPasswordField();
+        text_pass = new UPasswordField();
         center_pass.add(text_pass);
 
         UPanel center_btn = getChildPanel(6, 2);
         center_btn.setLayout(new BorderLayout());
-        btn_login = new JButton(getContext().getString("login"));
+        btn_login = new UButton(getContext().getString("login"));
         center_btn.add(btn_login);
 
         UPanel rb_label = getChildPanel(7, 2);

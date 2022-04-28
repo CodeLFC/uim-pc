@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import gaozhi.online.ugui.core.activity.Activity;
 import gaozhi.online.ugui.core.activity.Context;
 import gaozhi.online.ugui.core.activity.Intent;
+import gaozhi.online.ugui.core.activity.widget.UButton;
 import gaozhi.online.ugui.core.activity.widget.UPanel;
 import gaozhi.online.ugui.core.activity.widget.UTextField;
 import gaozhi.online.ugui.core.activity.widget.UToast;
@@ -30,9 +31,9 @@ public class FindPassActivity extends Activity implements Runnable, ApiRequest.R
     private static final int ROWS = 8;
     private UTextField text_phone;
     private UTextField text_verify_code;
-    private JButton btn_send;
+    private UButton btn_send;
     private UTextField text_new_pass;
-    private JButton btn_reset_pass;
+    private UButton btn_reset_pass;
     private Timer timer;
     //data
     private VerifyCode verifyCode;
@@ -78,10 +79,10 @@ public class FindPassActivity extends Activity implements Runnable, ApiRequest.R
         panelPass.add(text_new_pass);
 
 
-        btn_send = new JButton(getContext().getString("send"));
+        btn_send = new UButton(getContext().getString("send"));
         panelVerifyCode.add(btn_send, BorderLayout.EAST);
 
-        btn_reset_pass = new JButton(getContext().getString("update_pass"));
+        btn_reset_pass = new UButton(getContext().getString("update_pass"));
         UPanel panelRegister = getChildPanel(6, 2);
         panelRegister.setLayout(new BorderLayout());
         panelRegister.add(btn_reset_pass);

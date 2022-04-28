@@ -7,6 +7,7 @@ import gaozhi.online.uim.entity.Friend;
 import gaozhi.online.uim.ui.main.friend.view.FriendBubble;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.util.HashMap;
@@ -20,52 +21,30 @@ import java.util.Map;
  */
 public class FriendCellRender extends URecyclerCellRender<Friend> {
     private final Context context;
-    private final Map<Integer, FriendViewHolder> viewHolderMap = new HashMap<>();
 
     public FriendCellRender(Context context) {
         this.context = context;
     }
 
     @Override
-    public Component getListCellRendererComponent(JList<? extends Friend> list, Friend value, int index, boolean isSelected, boolean cellHasFocus) {
-        FriendViewHolder friendViewHolder;
-        if (!viewHolderMap.containsKey(index)) {
-            friendViewHolder = new FriendViewHolder(context);
-            viewHolderMap.put(index, friendViewHolder);
-        }
-        friendViewHolder = viewHolderMap.get(index);
-        friendViewHolder.bindView(value);
-        return friendViewHolder;
+    protected ViewHolder<Friend> createViewHolder() {
+        return new FriendViewHolder(context);
     }
 
-    /**
-     * @description: TODO 获取view holder
-     * @author LiFucheng
-     * @date 2022/4/15 9:11
-     * @version 1.0
-     */
-    public FriendViewHolder getFriendViewHolder(int index) {
-        return viewHolderMap.get(index);
-    }
-
-    public static class FriendViewHolder extends UPanel {
+    public static class FriendViewHolder extends ViewHolder<Friend> {
         private final FriendBubble friendBubble;
 
         public FriendViewHolder(Context context) {
             setLayout(new BorderLayout());
-            setBorder(new LineBorder(Color.WHITE));
+            //setBorder(new LineBorder(Color.GRAY));
+            setBorder(new EmptyBorder(5,5,5,5));
             friendBubble = new FriendBubble(context);
             add(friendBubble);
             System.out.println(" FriendCellRender 渲染 ");
         }
 
-        /**
-         * @description: TODO 刷新频率非常快，不要在这里创建对象
-         * @author LiFucheng
-         * @date 2022/3/18 19:09
-         * @version 1.0
-         */
-        public void bindView(Friend friend) {
+        @Override
+        public void bindView(int i, boolean b, boolean b1, Friend friend) {
             friendBubble.bindView(friend);
         }
     }

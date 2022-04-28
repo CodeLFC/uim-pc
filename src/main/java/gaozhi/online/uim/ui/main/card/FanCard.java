@@ -52,7 +52,7 @@ public class FanCard extends BaseCard<UserDTO> implements ApiRequest.ResultHandl
 
     @Override
     public void initUI() {
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(10,10));
         fanURecyclerView = new URecyclerView<>();
         fanURecyclerView.setCellRender(new FriendCellRender(getContext()));
         fanListModel = new FriendListModel(fanURecyclerView,userDTO.getToken().getUserid());
@@ -93,7 +93,7 @@ public class FanCard extends BaseCard<UserDTO> implements ApiRequest.ResultHandl
 
     @Override
     public void error(int id, int code, String message) {
-        UToast.show(this, code + message);
+        UToast.show(getContext(), code + message);
     }
 
     @Override

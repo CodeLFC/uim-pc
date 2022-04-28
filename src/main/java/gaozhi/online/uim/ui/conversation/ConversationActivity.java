@@ -10,14 +10,12 @@ import gaozhi.online.uim.entity.Friend;
 import gaozhi.online.uim.entity.Token;
 import gaozhi.online.uim.im.conversation.Conversation;
 import gaozhi.online.uim.im.conversation.message.IMMessage;
-import gaozhi.online.uim.im.entity.UClient;
 import gaozhi.online.uim.im.service.ConversationService;
 import gaozhi.online.uim.im.service.IMServiceApplication;
 import gaozhi.online.uim.im.service.UserPoolService;
 import gaozhi.online.uim.ui.conversation.chat.IMMsgCellRender;
 import gaozhi.online.uim.ui.conversation.chat.IMMsgListModel;
 import gaozhi.online.uim.ui.conversation.function.UpdateFriendActivity;
-import gaozhi.online.uim.utils.DateTimeUtil;
 import gaozhi.online.uim.utils.StringUtil;
 
 import javax.swing.*;
@@ -49,7 +47,7 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
     private IMMsgListModel imMsgListModel;
     private UPanel showPanel;
     private UTextField field_msg;
-    private JButton btn_send_msg;
+    private UButton btn_send_msg;
     //bottom
     private UImageView image_real_video;
     private UImageView image_real_audio;
@@ -142,7 +140,7 @@ public class ConversationActivity extends Activity implements Conversation.IMMes
         gridBagLayout.addComponent(field_msg);
         gridBagLayout.setWeight(0.01, 0);
         gridBagLayout.addComponent(new Container());
-        btn_send_msg = new JButton(getContext().getString("send"));
+        btn_send_msg = new UButton(getContext().getString("send"));
         gridBagLayout.setWeight(0.1, 0);
         gridBagLayout.addComponent(btn_send_msg);
         gridBagLayout.setWeight(0.01, 0);

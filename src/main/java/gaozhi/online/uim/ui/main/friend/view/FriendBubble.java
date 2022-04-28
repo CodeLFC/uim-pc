@@ -4,7 +4,6 @@ import gaozhi.online.ugui.core.activity.Context;
 import gaozhi.online.ugui.core.activity.widget.UImageView;
 import gaozhi.online.ugui.core.activity.widget.ULabel;
 import gaozhi.online.ugui.core.activity.widget.UPanel;
-import gaozhi.online.ugui.core.resource.FontClass;
 import gaozhi.online.ugui.core.utils.ImageUtil;
 import gaozhi.online.uim.entity.UserInfo;
 import gaozhi.online.uim.entity.Friend;
@@ -50,9 +49,7 @@ public class FriendBubble extends UPanel implements Consumer<UserInfo> {
         head = new UImageView(ImageUtil.getScaleImage(defaultHead, 50));
         head.setBorder(new LineBorder(new Color(217,217,25),2));
         label_name = new ULabel();
-        label_name.setFont(FontClass.FontExample.SONG14.getFont());
         label_remark = new ULabel();
-        label_remark.setFont(FontClass.FontExample.SONG14.getFont());
         label_friendship = new ULabel();
         label_unread = new ULabel();
         label_unread.setForeground(Color.RED);

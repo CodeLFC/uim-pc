@@ -22,25 +22,17 @@ import java.util.Map;
 public class IMMsgCellRender extends URecyclerCellRender<IMMessage> {
 
     private final Context context;
-    private final Map<Integer, IMMessageViewHolder> viewHolderMap = new HashMap<>();
 
     public IMMsgCellRender(Context context) {
         this.context = context;
     }
 
-
     @Override
-    public Component getListCellRendererComponent(JList<? extends IMMessage> list, IMMessage value, int index, boolean isSelected, boolean cellHasFocus) {
-        if (!viewHolderMap.containsKey(index)) {
-            IMMessageViewHolder messageViewHolder = new IMMessageViewHolder(context);
-            viewHolderMap.put(index, messageViewHolder);
-        }
-        IMMessageViewHolder component = viewHolderMap.get(index);
-        component.bindView(value);
-        return component;
+    protected ViewHolder<IMMessage> createViewHolder() {
+        return new IMMessageViewHolder(context);
     }
 
-    private static class IMMessageViewHolder extends UPanel {
+    private static class IMMessageViewHolder extends ViewHolder<IMMessage> {
         private final IMMsgBubble msgBubble;
         //布局
         private final FlowLayout flowLayout;
@@ -53,13 +45,8 @@ public class IMMsgCellRender extends URecyclerCellRender<IMMessage> {
             System.out.println(" IMMsgCellRender 渲染 ");
         }
 
-        /**
-         * @description: TODO 刷新频率非常快，不要在这里创建对象
-         * @author LiFucheng
-         * @date 2022/3/18 19:09
-         * @version 1.0
-         */
-        public void bindView(IMMessage msg) {
+        @Override
+        public void bindView(int i, boolean b, boolean b1, IMMessage msg) {
             UserPoolService userPoolService = IMServiceApplication.getInstance().getServiceInstance(UserPoolService.class);
             if (msg.getFromId() == userPoolService.getSelfId()) {
                 flowLayout.setAlignment(FlowLayout.RIGHT);

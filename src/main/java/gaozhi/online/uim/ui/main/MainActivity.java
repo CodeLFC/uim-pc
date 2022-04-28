@@ -79,8 +79,7 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
         userDTO = intent.getObject(INTENT_USER);
         logger.info(userDTO.toString());
         top_height = getContext().getDimen("main_top_height", 50);
-        bottom_height = getContext().getDimen("main_bottom_height", 50);
-
+        bottom_height = getContext().getDimen("main_bottom_height",50);
         getIMServerService = new GetIMServerService(this);
 
     }
@@ -98,7 +97,7 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
         //二级子布局
         // ----top
         top = new UPanel();
-        top.setLayout(new BorderLayout());
+        top.setLayout( new BorderLayout());
         top.setPreferredSize(new Dimension(getWidth(), top_height));
         //-========center
         center = new UPanel();
@@ -106,13 +105,7 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
         center.setLayout(centerLayout);
         //====================bottom
         bottom = new UPanel();
-        FlowLayout flowLayout_bottom = new FlowLayout();
-        flowLayout_bottom.setAlignment(FlowLayout.LEFT);
-        flowLayout_bottom.setVgap(10);
-        flowLayout_bottom.setHgap(10);
-        bottom.setLayout(flowLayout_bottom);
-        bottom.setPreferredSize(new Dimension(getWidth(), bottom_height));
-
+        bottom.setLayout(new BorderLayout());
         panel.add(top, BorderLayout.NORTH);
         panel.add(center, BorderLayout.CENTER);
         panel.add(bottom, BorderLayout.SOUTH);
@@ -124,9 +117,8 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
         //签名
         //label_signature = new JLabel(getContext().getString("signature"));
         //top.add(label_signature,BorderLayout.NORTH);
-        text_search_content = new UTextField();
-        text_search_content.setHint(getContext().getString("search_user"));
-        top.add(text_search_content, BorderLayout.SOUTH);
+
+
         //导航栏
         uNavigationBar = new UNavigationBar();
         uNavigationBar.setItems(new String[]{getContext().getString("attention"), getContext().getString("fan")});
@@ -140,6 +132,10 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
             center.add(baseCard, baseCard.getKey());
         }
         //---------bottom
+        text_search_content = new UTextField();
+        text_search_content.setHint(getContext().getString("search_user"));
+        bottom.add(text_search_content);
+
         try {
             image_info = new UImageView(ImageUtil.getScaleImage(getContext().getDrawable("bottom_info"), bottom_height / 2));
             image_server = new UImageView(ImageUtil.getScaleImage(getContext().getDrawable("bottom_server"), bottom_height / 2));
@@ -147,14 +143,24 @@ public class MainActivity extends Activity implements ApiRequest.ResultHandler, 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
        // label_server = new JLabel(getContext().getString("tip_server"));
         label_beat = new JLabel();
-        bottom.add(image_info);
-        bottom.add(image_exit_account);
-        bottom.add(image_server);
-      //  bottom.add(label_server);
-        bottom.add(label_beat);
+        UPanel imagePanel = new UPanel();
+        FlowLayout flowLayout_bottom = new FlowLayout();
+        flowLayout_bottom.setAlignment(FlowLayout.LEFT);
+        flowLayout_bottom.setVgap(10);
+        flowLayout_bottom.setHgap(10);
+        imagePanel.setLayout(flowLayout_bottom);
+
+        imagePanel.add(image_info);
+        imagePanel.add(image_exit_account);
+        imagePanel.add(image_server);
+        imagePanel.add(label_beat);
+        bottom.add(imagePanel,BorderLayout.SOUTH);
+        //  bottom.add(label_server);
+
+
+
         //---------listener
         image_info.setActionListener(this);
         text_search_content.addKeyListener(this);

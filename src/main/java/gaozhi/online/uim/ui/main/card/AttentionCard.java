@@ -53,7 +53,7 @@ public class AttentionCard extends BaseCard<UserDTO> implements ApiRequest.Resul
 
     @Override
     public void initUI() {
-        setLayout(new BorderLayout());
+        setLayout(new BorderLayout(10,10));
         friendURecyclerView = new URecyclerView<>();
         friendCellRender = new FriendCellRender(getContext());
         friendURecyclerView.setCellRender(friendCellRender);
@@ -98,7 +98,7 @@ public class AttentionCard extends BaseCard<UserDTO> implements ApiRequest.Resul
 
     @Override
     public void error(int id, int code, String message) {
-        UToast.show(this, code + message);
+        UToast.show(getContext(), code + message);
     }
 
     @Override

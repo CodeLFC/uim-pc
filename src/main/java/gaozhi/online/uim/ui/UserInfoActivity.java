@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import gaozhi.online.ugui.core.activity.Activity;
 import gaozhi.online.ugui.core.activity.Context;
 import gaozhi.online.ugui.core.activity.Intent;
+import gaozhi.online.ugui.core.activity.widget.UButton;
+import gaozhi.online.ugui.core.activity.widget.UComboBox;
 import gaozhi.online.ugui.core.activity.widget.UTextField;
 import gaozhi.online.ugui.core.activity.widget.UToast;
 import gaozhi.online.ugui.core.net.Result;
@@ -68,7 +70,7 @@ public class UserInfoActivity extends Activity implements ApiRequest.ResultHandl
     private UTextField text_nick;
     private UTextField text_remark;
     private UTextField text_head;
-    private JComboBox<UserInfo.Gender> text_gender;
+    private UComboBox<UserInfo.Gender> text_gender;
     private UTextField text_birth;
     private UTextField text_gps;
     private UTextField text_cell_phone;
@@ -77,9 +79,9 @@ public class UserInfoActivity extends Activity implements ApiRequest.ResultHandl
     private UTextField text_qq;
     private UTextField text_email;
 
-    private JButton btn_update;
+    private UButton btn_update;
     //friend
-    private JButton btn_chat;
+    private UButton btn_chat;
     //service
     private final Gson gson = new Gson();
     private UpdateUserInfoService updateUserInfoService;
@@ -120,7 +122,7 @@ public class UserInfoActivity extends Activity implements ApiRequest.ResultHandl
         text_nick = new UTextField();
         text_remark = new UTextField();
         text_head = new UTextField();
-        text_gender = new JComboBox<>();
+        text_gender = new UComboBox<>();
         text_birth = new UTextField();
         text_gps = new UTextField();
         text_cell_phone = new UTextField();
@@ -156,7 +158,7 @@ public class UserInfoActivity extends Activity implements ApiRequest.ResultHandl
         getChildPanel(row++, col).add(text_head);
         getChildPanel(row++, col).add(text_gender);
         getChildPanel(row++, col).add(text_birth);
-        btn_update = new JButton();
+        btn_update = new UButton();
         btn_update.setText(getContext().getString("update_info"));
         getChildPanel(row, col).add(btn_update);
 
@@ -181,7 +183,7 @@ public class UserInfoActivity extends Activity implements ApiRequest.ResultHandl
         getChildPanel(row++, col).add(static_update_time);
         getChildPanel(row++, col).add(static_create_time);
 
-        btn_chat = new JButton();
+        btn_chat = new UButton();
         btn_chat.setText(getContext().getString("chat"));
         getChildPanel(row, col).add(btn_chat);
 
